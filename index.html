@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naseeb Biryani - Cloud POS & Khata</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131b2e;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; }
+        .container { max-width: 650px; margin: auto; background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color); }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+        .brand h2 { margin: 0; color: var(--accent-blue); font-size: 22px; letter-spacing: 0.5px; }
+        .brand p { margin: 3px 0 0 0; color: var(--text-muted); font-size: 12px; }
+        
+        .btn-group { display: flex; gap: 8px; }
+        .admin-btn, .export-btn { background: #0f172a; border: 1px solid var(--border-color); color: var(--text-muted); padding: 7px 14px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .admin-btn:hover, .export-btn:hover { background: var(--border-color); color: #fff; transform: translateY(-1px); }
+        .export-btn { border-color: var(--accent-green); color: var(--accent-green); }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .metric-card { background: linear-gradient(145deg, #0f172a, #1e293b); padding: 15px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+        .metric-card span { display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .metric-card b { font-size: 18px; color: var(--accent-blue); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-group { margin-bottom: 12px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 12px; color: var(--text-muted); }
+        input, select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus, select:focus { border-color: var(--accent-blue); box-shadow: 0 0 8px rgba(56,189,248,0.3); }
+        
+        .menu-box { background: #0f172a; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; max-height: 180px; overflow-y: auto; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 13px; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item label { color: #fff; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .menu-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-green); cursor: pointer; }
+
+        .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-size: 15px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: 0 6px 15px rgba(16,185,129,0.3); }
+        .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        table { width: 100%; margin-top: 25px; border-collapse: collapse; font-size: 13px; border-radius: 10px; overflow: hidden; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
+        th { background: #0f172a; color: var(--accent-blue); font-weight: 600; }
+        tr:nth-child(even) { background: #131b2e; }
+        tr:nth-child(odd) { background: #0f172a; }
+
+        #lockScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.97); z-index: 2000; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box; }
+        .lock-content { background: #1b1218; border: 2px solid var(--accent-red); padding: 35px; border-radius: 20px; max-width: 400px; width: 100%; box-shadow: 0 25px 50px rgba(239,68,68,0.3); }
+        .lock-content h1 { color: var(--accent-red); margin-top: 0; }
+        .lock-content p { color: var(--text-muted); font-size: 14px; }
+
+        #adminModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
+        .modal-box { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+    <div id="lockScreen">
+        <div class="lock-content">
+            <h1>⚠️ SYSTEM LOCKED</h1>
+            <p>Aapka mahana subscription pending hai. System dobara khulwane ke liye agency se rabta karein!</p>
+        </div>
+    </div>
+
+    <div id="adminModal">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--accent-blue);">🔐 Admin Master Control</h3>
+            <p style="font-size:12px; color:var(--text-muted);">Manage Shop Name, Prices & Lock Status.</p>
+            
+            <div class="form-group">
+                <label>Shop / Business Name</label>
+                <input type="text" id="adminShopName" value="Naseeb Biryani">
+            </div>
+            
+            <h4 style="color:var(--accent-blue); font-size:13px; margin:15px 0 5px 0;">Edit Item Prices (PKR)</h4>
+            <div class="form-group"><label>Single Chicken Biryani</label><input type="number" id="price_cb1" value="350"></div>
+            <div class="form-group"><label>Double Chicken Biryani</label><input type="number" id="price_cb2" value="550"></div>
+            <div class="form-group"><label>Single Beef Biryani</label><input type="number" id="price_bb1" value="400"></div>
+            <div class="form-group"><label>Double Beef Biryani</label><input type="number" id="price_bb2" value="650"></div>
+            <div class="form-group"><label>Cold Drink</label><input type="number" id="price_drink" value="100"></div>
+            <div class="form-group"><label>Raita & Salad</label><input type="number" id="price_rs" value="50"></div>
+
+            <div class="form-group" style="margin-top:15px;">
+                <label>Admin Master Password</label>
+                <input type="password" id="adminInput" placeholder="suraka123">
+            </div>
+
+            <button class="submit-btn" onclick="saveAdminSettings()" style="background:var(--accent-blue);">Save & Update Settings</button>
+            <button class="submit-btn" onclick="toggleSystemLock()" style="background:var(--accent-red); margin-top:8px;">Lock / Unlock System</button>
+            <button class="admin-btn" style="width:100%; margin-top:10px;" onclick="closeAdmin()">Close Panel</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="brand">
+                <h2 id="displayShopName">👑 NASEEB BIRYANI</h2>
+                <p>Cloud POS & Daily Ledger System</p>
+            </div>
+            <div class="btn-group">
+                <button class="export-btn" onclick="exportCSV()">📥 Export</button>
+                <button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card"><span>Total Sales</span><b id="lblSales">Rs. 0</b></div>
+            <div class="metric-card"><span>Cash Paid</span><b id="lblCash" style="color:var(--accent-green);">Rs. 0</b></div>
+            <div class="metric-card"><span>Udhaar</span><b id="lblUdhaar" style="color:var(--accent-red);">Rs. 0</b></div>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="entryDate">
+            </div>
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="custName" placeholder="e.g. Farhan / Walk-in">
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Select Menu Items (Multi-Select)</label>
+                <div class="menu-box" id="menuContainer"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Total Calculation</label>
+                <input type="text" id="totalCalculation" readonly style="color:var(--accent-green); font-weight:bold; font-size:16px;" value="PKR 0">
+            </div>
+
+            <div class="form-group">
+                <label>Payment Mode</label>
+                <select id="payType">
+                    <option value="Cash">Cash Paid</option>
+                    <option value="Udhaar">Udhaar (Credit)</option>
+                    <option value="Online">Online Transfer</option>
+                </select>
+            </div>
+        </div>
+        <button class="submit-btn" onclick="saveEntry()">+ Save Order Entry</button>
+
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items Ordered</th>
+                        <th>Total</th>
+                        <th>Mode</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('entryDate').valueAsDate = new Date();
+
+        let defaultSettings = {
+            shopName: "Naseeb Biryani",
+            prices: {
+                "Single Chicken Biryani": 350,
+                "Double Chicken Biryani": 550,
+                "Single Beef Biryani": 400,
+                "Double Beef Biryani": 650,
+                "Cold Drink": 100,
+                "Raita & Salad": 50
+            }
+        };
+
+        function getSettings() {
+            let saved = localStorage.getItem('pos_settings');
+            return saved ? JSON.parse(saved) : defaultSettings;
+        }
+
+        window.onload = function() {
+            checkLockStatus();
+            renderMenu();
+            loadData();
+            updateHeader();
+        }
+
+        function updateHeader() {
+            let settings = getSettings();
+            document.getElementById('displayShopName').innerText = "👑 " + settings.shopName.toUpperCase();
+        }
+
+        function renderMenu() {
+            let settings = getSettings();
+            let container = document.getElementById('menuContainer');
+            container.innerHTML = "";
+
+            for (let [item, price] of Object.entries(settings.prices)) {
+                let div = document.createElement('div');
+                div.className = 'menu-item';
+                div.innerHTML = `
+                    <label>
+                        <input type="checkbox" value="${item}" data-price="${price}" onchange="calculateTotal()">
+                        ${item} (Rs. ${price})
+                    </label>
+                    <span style="color:var(--accent-blue); font-weight:bold;">Rs. ${price}</span>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function calculateTotal() {
+            let checkboxes = document.querySelectorAll('#menuContainer input[type="checkbox"]:checked');
+            let total = 0;
+            checkboxes.forEach(cb => {
+                total += parseFloat(cb.getAttribute('data-price'));
+            });
+            document.getElementById('totalCalculation').value = "PKR " + total;
+        }
+
+        function saveEntry() {
+            let date = document.getElementById('entryDate').value;
+            let name = document.getElementById('custName').value;
+            let checkboxes = document.querySelectorAll('#menuContainer input[type="checkbox"]:checked');
+            let payType = document.getElementById('payType').value;
+
+            if(!name) { alert("Please enter customer name!"); return; }
+            if(checkboxes.length === 0) { alert("Please select at least one menu item!"); return; }
+
+            let orderedItems = [];
+            let total = 0;
+            checkboxes.forEach(cb => {
+                orderedItems.push(cb.value);
+                total += parseFloat(cb.getAttribute('data-price'));
+            });
+
+            let entry = { date, name, items: orderedItems.join(', '), total, type: payType };
+
+            let history = JSON.parse(localStorage.getItem('naseeb_cloud_data')) || [];
+            history.unshift(entry);
+            localStorage.setItem('naseeb_cloud_data', JSON.stringify(history));
+
+            document.getElementById('custName').value = "";
+            checkboxes.forEach(cb => cb.checked = false);
+            calculateTotal();
+            loadData();
+        }
+
+        function loadData() {
+            let history = JSON.parse(localStorage.getItem('naseeb_cloud_data')) || [];
+            let tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+
+            let sSales = 0, sCash = 0, sUdhaar = 0;
+
+            history.forEach(item => {
+                let amt = parseFloat(item.total);
+                sSales += amt;
+                if(item.type === 'Cash' || item.type === 'Online') sCash += amt;
+                if(item.type === 'Udhaar') sUdhaar += amt;
+
+                let row = `<tr>
+                    <td>${item.date}</td>
+                    <td>${item.name}</td>
+                    <td style="text-align:left; font-size:12px;">${item.items}</td>
+                    <td style="font-weight:bold; color:var(--accent-blue);">Rs. ${item.total}</td>
+                    <td><span style="padding:2px 6px; border-radius:4px; font-size:11px; background:${item.type==='Cash'?'#065f46':(item.type==='Online'?'#1e40af':'#9f1239')}">${item.type}</span></td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('lblSales').innerText = "Rs. " + sSales;
+            document.getElementById('lblCash').innerText = "Rs. " + sCash;
+            document.getElementById('lblUdhaar').innerText = "Rs. " + sUdhaar;
+        }
+
+        function exportCSV() {
+            let history = JSON.parse(localStorage.getItem('naseeb_cloud_data')) || [];
+            if(history.length === 0) { alert("No data available to export!"); return; }
+
+            let csvContent = "data:text/csv;charset=utf-8,Date,Customer Name,Items Ordered,Total Amount,Payment Mode\n";
+            history.forEach(row => {
+                csvContent += `"${row.date}","${row.name}","${row.items}",${row.total},"${row.type}"\n`;
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "sales_report_ledger.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openAdmin() {
+            let settings = getSettings();
+            document.getElementById('adminShopName').value = settings.shopName;
+            document.getElementById('price_cb1').value = settings.prices["Single Chicken Biryani"];
+            document.getElementById('price_cb2').value = settings.prices["Double Chicken Biryani"];
+            document.getElementById('price_bb1').value = settings.prices["Single Beef Biryani"];
+            document.getElementById('price_bb2').value = settings.prices["Double Beef Biryani"];
+            document.getElementById('price_drink').value = settings.prices["Cold Drink"];
+            document.getElementById('price_rs').value = settings.prices["Raita & Salad"];
+            
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminModal').style.display = 'none';
+            document.getElementById('adminInput').value = "";
+        }
+
+        function saveAdminSettings() {
+            let pass = document.getElementById('adminInput').value;
+            if(pass !== 'suraka123') { alert("Incorrect Admin Password!"); return; }
+
+            let newSettings = {
+                shopName: document.getElementById('adminShopName').value,
+                prices: {
+                    "Single Chicken Biryani": parseFloat(document.getElementById('price_cb1').value),
+                    "Double Chicken Biryani": parseFloat(document.getElementById('price_cb2').value),
+                    "Single Beef Biryani": parseFloat(document.getElementById('price_bb1'].value),
+                    "Double Beef Biryani": parseFloat(document.getElementById('price_bb2').value),
+                    "Cold Drink": parseFloat(document.getElementById('price_drink').value),
+                    "Raita & Salad": parseFloat(document.getElementById('price_rs').value)
+                }
+            };
+
+            localStorage.setItem('pos_settings', JSON.stringify(newSettings));
+            updateHeader();
+            renderMenu();
+            calculateTotal();
+            alert("Settings & Prices Updated Successfully!");
+            closeAdmin();
+        }
+
+        function toggleSystemLock() {
+            let pass = document.getElementById('adminInput').value;
+            if(pass !== 'suraka123') { alert("Incorrect Admin Password!"); return; }
+
+            let isLocked = localStorage.getItem('system_locked') === 'true';
+            localStorage.setItem('system_locked', !isLocked);
+            checkLockStatus();
+            alert(isLocked ? "System Unlocked!" : "System Locked!");
+            closeAdmin();
+        }
+
+        function checkLockStatus() {
+            let locked = localStorage.getItem('system_locked') === 'true';
+            if(locked) {
+                document.getElementById('lockScreen').style.display = 'flex';
+            } else {
+                document.getElementById('lockScreen').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

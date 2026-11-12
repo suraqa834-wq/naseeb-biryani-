@@ -3,520 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Naseeb Biryani — Enterprise Cloud POS & SaaS Suite</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Smart POS & SaaS Ledger</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #040609;
-            --bg-surface: #0a0e17;
-            --bg-card: rgba(15, 23, 42, 0.85);
-            --bg-elevated: rgba(30, 41, 59, 0.75);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            
-            --brand-emerald: #10b981;
-            --brand-emerald-glow: rgba(16, 185, 129, 0.3);
-            --brand-gold: #f59e0b;
-            --brand-cyan: #06b6d4;
-            --brand-violet: #8b5cf6;
-            --brand-rose: #f43f5e;
-            
+            --bg-base: #06090f;
+            --bg-card: #0f172a;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.25);
+            --rose: #f43f5e;
+            --cyan: #06b6d4;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            
-            --radius-xl: 20px;
-            --radius-lg: 14px;
-            --radius-md: 10px;
+            --border: rgba(255, 255, 255, 0.08);
+            --radius: 16px;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-base); color: var(--text-primary); padding: 14px; min-height: 100vh; }
+        .app-container { max-width: 480px; margin: 0 auto; padding-bottom: 40px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
+        .brand h1 { font-size: 18px; font-weight: 800; color: #fff; }
+        .brand span { font-size: 11px; color: var(--emerald); font-weight: 700; background: rgba(16,185,129,0.12); padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 2px; }
+        
+        .admin-trigger { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-base);
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 90% 15%, rgba(245, 158, 11, 0.08) 0%, transparent 38%),
-                radial-gradient(circle at 50% 95%, rgba(6, 182, 212, 0.07) 0%, transparent 45%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            line-height: 1.5;
-        }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px; letter-spacing: 0.6px; display: flex; justify-content: space-between; align-items: center; }
 
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
+        .total-banner { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1)); border: 1px solid rgba(16,185,129,0.3); border-radius: var(--radius); padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .total-banner h3 { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
+        .total-banner span { font-size: 24px; font-weight: 800; color: var(--emerald); letter-spacing: -0.5px; }
 
-        .app-shell { display: flex; min-height: 100vh; }
-        @media (max-width: 900px) { .app-shell { flex-direction: column; } }
+        .items-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+        .item-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: left; cursor: pointer; transition: 0.2s; color: #fff; }
+        .item-btn:active { transform: scale(0.97); }
+        .item-btn.selected { border-color: var(--emerald); background: rgba(16,185,129,0.14); box-shadow: 0 0 15px var(--emerald-glow); }
+        .item-name { font-size: 13px; font-weight: 700; display: block; margin-bottom: 4px; }
+        .item-price { font-size: 13px; color: var(--emerald); font-weight: 800; }
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: rgba(8, 12, 19, 0.96);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border-subtle);
-            padding: 20px 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            z-index: 100;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-        }
-        @media (max-width: 900px) {
-            .sidebar { position: fixed; left: -280px; height: 100%; width: 280px; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
-            .sidebar.mobile-open { left: 0; }
-        }
+        .summary-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 12px; }
+        .summary-box strong { color: var(--emerald); font-size: 15px; }
 
-        .brand-box { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
-        .brand-logo { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--brand-emerald), #059669); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 6px 20px var(--brand-emerald-glow); flex-shrink: 0; }
-        .brand-title h1 { font-size: 16px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
-        .brand-title span { font-size: 10px; font-weight: 600; color: var(--brand-emerald); text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-        .live-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-emerald); box-shadow: 0 0 8px var(--brand-emerald); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { padding: 14px; border-radius: 12px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; color: #fff; text-align: center; }
+        .btn-cash { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px var(--emerald-glow); }
+        .btn-udhaar { background: linear-gradient(135deg, #f43f5e, #be123c); box-shadow: 0 4px 15px rgba(244,63,94,0.25); }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; overflow-y: auto; flex-grow: 1; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--radius-md); background: transparent; border: 1px solid transparent; color: var(--text-secondary); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-align: left; width: 100%; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
-        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.03)); border-color: rgba(16, 185, 129, 0.35); color: #34d399; }
+        .table-wrap { overflow-x: auto; margin-top: 10px; max-height: 220px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+        th { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-card); }
+        td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
 
-        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 10px; }
-        .saas-pill { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.22); padding: 10px 12px; border-radius: var(--radius-md); font-size: 11px; }
-        .saas-pill strong { color: #34d399; display: block; margin-bottom: 2px; }
-        .saas-pill span { color: var(--text-secondary); font-size: 10px; }
+        /* Lock Screen Overlay */
+        #lockOverlay { display: none; position: fixed; inset: 0; background: rgba(3, 5, 8, 0.96); backdrop-filter: blur(20px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+        .lock-box { background: var(--bg-card); border: 2px solid rgba(244,63,94,0.4); border-radius: 20px; padding: 30px 20px; max-width: 400px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
 
-        /* Mobile Header */
-        .mobile-header { display: none; background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-subtle); padding: 12px 16px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
-        @media (max-width: 900px) { .mobile-header { display: flex; } }
-        .mobile-menu-btn { background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 95; }
-        .sidebar-overlay.active { display: block; }
+        /* Admin Modal */
+        #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; padding: 16px; overflow-y: auto; }
+        .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 12px; outline: none; }
+        
+        .stat-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center; }
+        .stat-card span { font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 700; }
+        .stat-card strong { font-size: 15px; color: var(--emerald); font-weight: 800; }
 
-        /* Main Workspace */
-        .main-workspace { flex-grow: 1; padding: 24px 28px; max-width: 1320px; width: 100%; margin: 0 auto; overflow-x: hidden; }
-        @media (max-width: 768px) { .main-workspace { padding: 16px 12px; } }
-
-        .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
-        .page-heading h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
-        .page-heading p { font-size: 12px; color: var(--text-secondary); }
-        .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-        .btn { padding: 10px 16px; border-radius: var(--radius-md); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); background: var(--bg-elevated); color: var(--text-primary); display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; white-space: nowrap; }
-        .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.2); }
-        .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; box-shadow: 0 6px 18px var(--brand-emerald-glow); }
-        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #040609; }
-        .btn-violet { background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
-        .btn-rose { background: rgba(244, 63, 94, 0.18); border-color: rgba(244, 63, 94, 0.4); color: #fda4af; }
-
-        /* Filter Ribbon */
-        .filter-ribbon { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-        .filter-pill { padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.04); color: var(--text-secondary); border: 1px solid transparent; cursor: pointer; transition: 0.2s; }
-        .filter-pill:hover { color: #fff; background: rgba(255,255,255,0.08); }
-        .filter-pill.active { background: rgba(16, 185, 129, 0.18); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
-
-        /* KPI Bento Grid */
-        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 24px; }
-        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-
-        .kpi-card { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 16px; position: relative; overflow: hidden; transition: transform 0.2s ease; }
-        .kpi-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
-        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--kpi-accent, var(--brand-emerald)); opacity: 0.85; }
-        .kpi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-secondary); }
-        .kpi-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: rgba(255,255,255,0.05); }
-        .kpi-value { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
-
-        /* POS Split */
-        .pos-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }
-        @media (max-width: 900px) { .pos-layout { grid-template-columns: 1fr; } }
-
-        .glass-panel { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 20px; box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5); }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
-        .panel-header h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-
-        .dish-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 2px; }
-        .dish-card { background: rgba(12, 18, 32, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all 0.2s ease; cursor: pointer; user-select: none; }
-        .dish-card:hover { border-color: rgba(16, 185, 129, 0.4); background: rgba(12, 18, 32, 0.95); }
-        .dish-card.active-dish { border-color: var(--brand-emerald); background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(12, 18, 32, 0.95)); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15); }
-        .dish-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--brand-gold); background: rgba(245, 158, 11, 0.12); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
-        .dish-name { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.25; }
-        .dish-price { font-size: 15px; font-weight: 800; color: #34d399; margin-top: 2px; }
-
-        .stepper { display: flex; align-items: center; justify-content: space-between; background: rgba(4, 6, 9, 0.8); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 4px; }
-        .step-btn { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .step-btn:hover { background: var(--brand-emerald); }
-        .step-val { font-size: 14px; font-weight: 800; min-width: 24px; text-align: center; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .span-2 { grid-column: span 2; }
-        @media (max-width: 500px) { .span-2 { grid-column: span 1; } }
-
-        label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
-        input, select { width: 100%; padding: 11px 12px; background: rgba(4, 6, 9, 0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: #fff; font-family: inherit; font-size: 13px; outline: none; transition: 0.2s; }
-        input:focus, select:focus { border-color: var(--brand-emerald); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
-
-        .cart-box { margin-top: 14px; background: rgba(4, 6, 9, 0.7); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); padding: 14px; }
-        .cart-items { max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-        .cart-row { display: flex; justify-content: space-between; font-size: 12px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .checkout-footer { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
-        .grand-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .grand-total-row span { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
-        .grand-total-row strong { font-size: 24px; font-weight: 800; color: #34d399; letter-spacing: -0.4px; }
-
-        .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: rgba(10, 14, 23, 0.6); margin-top: 14px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
-        th { background: rgba(15, 23, 42, 0.95); color: var(--text-secondary); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-subtle); }
-        td { padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-primary); vertical-align: middle; }
-        tr:hover td { background: rgba(255, 255, 255, 0.02); }
-
-        .badge { padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
-        .badge-cash { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-online { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
-        .badge-udhaar { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
-
-        .view-section { display: none; animation: fadeIn 0.2s ease; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Modals */
-        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(2, 4, 8, 0.88); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-        .modal-card { background: #0d1320; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-xl); padding: 24px; width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); }
-        .admin-block { background: rgba(4, 6, 9, 0.65); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px; }
-
-        /* VIP SaaS Paywall / Lock Screen */
-        #lockScreen { display: none; position: fixed; inset: 0; background: rgba(3, 5, 8, 0.96); backdrop-filter: blur(24px); z-index: 3000; justify-content: center; align-items: center; padding: 16px; text-align: center; }
-        .lock-box { background: linear-gradient(145deg, #0d1320, #141d30); border: 2px solid rgba(244, 63, 94, 0.4); border-radius: 24px; padding: 36px 28px; max-width: 480px; width: 100%; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(244, 63, 94, 0.15); position: relative; overflow: hidden; }
-        .lock-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #f43f5e, #f59e0b, #10b981); }
-
-        @media print {
-            body * { visibility: hidden; }
-            #receiptPrintArea, #receiptPrintArea * { visibility: visible; }
-            #receiptPrintArea { position: absolute; left: 0; top: 0; width: 280px; background: #fff; color: #000; padding: 14px; font-family: monospace; }
-        }
+        .dish-row-admin { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+        .dish-row-admin input { padding: 8px; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <!-- VIP SUBSCRIPTION LOCK PAYWALL -->
-    <div id="lockScreen">
+    <!-- LOCK / EXPIRED PAYWALL SCREEN -->
+    <div id="lockOverlay">
         <div class="lock-box">
-            <div style="width: 64px; height: 64px; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px auto;">⏳</div>
-            <h2 style="color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.4px;">Maahana Subscription Khatam Ho Gayi Hai!</h2>
-            <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin-bottom: 16px;">Aapka pichla aur aane wala saara data <strong>100% Secure & Safe</strong> hai. Subscription upgrade karne ke baad aapka poora data aur pichle mahino ki entries foran wapas show ho jayengi.</p>
+            <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
+            <h2 style="color: #fff; font-size: 20px; font-weight: 800; margin-bottom: 8px;">Subscription Expired</h2>
+            <p id="lockReason" style="color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Aapka trial period khatam ho gaya hai. Mazeed istamal karne ke liye developer se rabta karein.</p>
+            <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 12px; border-radius: 12px; color: var(--emerald); font-weight: 700; font-size: 14px;">
+                📞 Contact: +92 XXXXXXXXXX
+            </div>
+        </div>
+    </div>
+
+    <!-- ADVANCED DEVELOPER ADMIN PANEL MODAL -->
+    <div id="adminModal">
+        <div class="admin-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <h3 style="font-size: 15px; font-weight: 800; color:#fff;">⚙️ SaaS Admin & Analytics</h3>
+                <button onclick="closeAdmin()" style="background:none; border:none; color:var(--text-secondary); font-size:16px; cursor:pointer;">✕</button>
+            </div>
             
-            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left;">
-                <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 4px;">🛡️ Data Guarantee Security:</div>
-                <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">Aapka 6-8 mahine ka data browser ki LocalStorage mein mehfooz hai. Lock hone se data delete nahi hota!</div>
-            </div>
-
-            <button class="btn btn-emerald" style="width: 100%; justify-content: center; padding: 14px; font-size: 14px; margin-bottom: 10px;" onclick="openUpgradePrompt()">🚀 Maahana Subscription Upgrade Karein</button>
-            <button class="btn btn-violet" style="width: 100%; justify-content: center; padding: 11px; font-size: 12px;" onclick="openAdminPasswordModal()">🔐 Admin Portal Login</button>
-        </div>
-    </div>
-
-    <div id="receiptPrintArea" style="display:none;"></div>
-
-  <!-- ADMIN PASSWORD MODAL -->
-    <div id="adminPassModal" class="modal-backdrop">
-        <div class="modal-card" style="max-width: 400px; text-align: center;">
-            <div style="font-size: 36px; margin-bottom: 10px;">🔑</div>
-            <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Admin Access Required</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Master password manually type karein (Default: suraka123)</p>
-            <input type="password" id="masterPasswordInput" placeholder="Enter master password..." style="text-align: center; font-size: 16px; margin-bottom: 14px;">
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-emerald" style="flex: 1; justify-content: center;" onclick="verifyAdminPassword()">Verify & Open</button>
-                <button class="btn" style="flex: 1; justify-content: center;" onclick="closeAdminModals()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MASTER ADMIN PANEL MODAL -->
-    <div id="adminModal" class="modal-backdrop">
-        <div class="modal-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                <div>
-                    <h3 style="font-size:18px; font-weight:800; color:#fff;">🔐 Master SaaS & Admin Control</h3>
-                    <p style="font-size:11px; color:var(--text-secondary);">Manage subscription lock, expiry date, and live menu pricing.</p>
+            <!-- Sales Analytics Stats -->
+            <div class="stat-box">
+                <div class="stat-card">
+                    <span>Mahina (Month)</span>
+                    <strong id="adminMonthSales">Rs. 0</strong>
                 </div>
-                <button class="btn" onclick="closeAdminModals()">✕</button>
-            </div>
-
-            <div class="admin-block">
-                <h4 style="color:var(--brand-gold); font-size:13px; margin-bottom:10px;">👑 Client Subscription & Remote Lock</h4>
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <div>
-                        <span style="font-size:10px; color:var(--text-secondary); display:block;">Current Portal Status</span>
-                        <span id="subStatusBadge" class="badge badge-cash" style="margin-top:3px; font-size:11px;">● UNLOCKED (ACTIVE)</span>
-                    </div>
-                    <button class="btn btn-rose" id="lockToggleBtn" onclick="toggleSystemLock()">🔒 Lock Client Website</button>
-                </div>
-                <div class="form-group" style="margin-top:12px;">
-                    <label>Subscription Expiry Date</label>
-                    <input type="date" id="adminExpiryDate">
+                <div class="stat-card">
+                    <span>Saal (Year)</span>
+                    <strong id="adminYearSales">Rs. 0</strong>
                 </div>
             </div>
 
-            <div class="admin-block">
-                <h4 style="color:var(--brand-cyan); font-size:13px; margin-bottom:10px;">🏪 Business Identity</h4>
-                <div class="form-group">
-                    <label>Restaurant / Shop Name</label>
-                    <input type="text" id="adminShopName" value="Naseeb Biryani">
-                </div>
+            <div class="form-group">
+                <label>Trial Days Allowed</label>
+                <input type="number" id="adminDays" min="1" max="365">
             </div>
 
-            <div class="admin-block">
-                <h4 style="color:#34d399; font-size:13px; margin-bottom:4px;">📋 Menu & Live Price Manager</h4>
-                <div id="adminMenuEditor" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:12px;"></div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <input type="text" id="newMenuItemName" placeholder="New Dish Name" style="flex:2; min-width:140px;">
-                    <input type="number" id="newMenuItemPrice" placeholder="Price (PKR)" style="flex:1; min-width:90px;">
-                    <button class="btn btn-emerald" onclick="addNewMenuItem()">+ Add</button>
-                </div>
+            <div class="form-group">
+                <label>Manual Status Control</label>
+                <select id="adminStatus">
+                    <option value="active">Active (Running)</option>
+                    <option value="locked">Force Lock (Expired/Unpaid)</option>
+                </select>
             </div>
 
-            <div style="display:flex; gap:8px; margin-top:16px;">
-                <button class="btn btn-emerald" style="flex:2; justify-content:center; padding:12px;" onclick="saveAdminSettings()">💾 Save & Apply Changes</button>
-                <button class="btn" style="flex:1; justify-content:center; padding:12px;" onclick="closeAdminModals()">Close</button>
+            <hr style="border:0; border-top:1px solid var(--border); margin: 12px 0;">
+
+            <label style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; display:block;">Manage Menu Items & Prices</label>
+            <div id="adminMenuContainer" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;">
+                <!-- Dynamic Menu Rows injected here -->
+            </div>
+            <button class="btn" style="background:rgba(255,255,255,0.06); width:100%; padding:8px; font-size:11px; margin-bottom:14px;" onclick="addMenuRow('', '')">+ Add New Dish</button>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-cash" style="flex:1; padding:10px; font-size:12px;" onclick="saveAdminSettings()">Save All Changes</button>
+                <button class="btn" style="flex:1; padding:10px; font-size:12px; background:rgba(255,255,255,0.05);" onclick="closeAdmin()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- MOBILE HEADER -->
-    <div class="mobile-header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
-            <span style="font-weight:800; font-size:15px; color:#fff;" id="mobileHeaderTitle">Naseeb Biryani</span>
+    <!-- MAIN APP SHELL -->
+    <div class="app-container">
+        <div class="header">
+            <div class="brand">
+                <h1>Naseeb Biryani</h1>
+                <span>Digital POS Ledger</span>
+            </div>
+            <button class="admin-trigger" onclick="promptAdmin()">⚙️ Admin</button>
         </div>
-        <button class="btn btn-violet" style="padding:6px 10px; font-size:11px;" onclick="openAdminPasswordModal()">🔐 Admin</button>
-    </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-
-    <!-- APP SHELL -->
-    <div class="app-shell">
-        <aside class="sidebar" id="appSidebar">
+        <div class="total-banner">
             <div>
-                <div class="brand-box">
-                    <div class="brand-logo">👑</div>
-                    <div class="brand-title">
-                        <h1 id="displayShopName">NASEEB BIRYANI</h1>
-                        <span><i class="live-pulse" id="headerStatusDot"></i> Enterprise POS</span>
-                    </div>
-                </div>
+                <h3>Aaj ki Total Sales</h3>
+                <span id="todayTotal">Rs. 0</span>
+            </div>
+            <button onclick="confirmReset()" style="background:none; border:none; color:var(--rose); font-size:11px; cursor:pointer; font-weight:700;">Reset Data</button>
+        </div>
 
-                <nav class="nav-menu">
-                    <button class="nav-item active" onclick="switchTab('posTab', this, 'POS Order Terminal', 'Fast counter billing & instant slip printing')">🛒 POS Order Terminal</button>
-                    <button class="nav-item" onclick="switchTab('calendarTab', this, 'Daily Calendar Explorer', 'Track day-by-day sales, expenses & profit')">📅 Daily Calendar</button>
-                    <button class="nav-item" onclick="switchTab('salesTab', this, 'Complete Sales Ledger', 'Searchable history of all orders & payments')">📊 Sales Ledger</button>
-                    <button class="nav-item" onclick="switchTab('udhaarTab', this, 'Udhaar & Credit Register', 'Manage customer credit balances & settlements')">📒 Udhaar Register</button>
-                    <button class="nav-item" onclick="switchTab('expenseTab', this, 'Expense & Profit Manager', 'Log daily raw material & utility expenses')">💸 Expense Manager</button>
-                </nav>
+        <div class="card">
+            <div class="card-title">Menu Selections (Tap to Select)</div>
+            <div class="items-grid" id="menuGrid"></div>
+
+            <div class="summary-box">
+                <span>Selected: <strong id="selItemName">Kuch nahi</strong></span>
+                <span>Total: <strong id="selItemTotal">Rs. 0</strong></span>
             </div>
 
-            <div class="sidebar-footer">
-                <div class="saas-pill">
-                    <strong>● 100% Secure Data Active</strong>
-                    <span id="sidebarExpiryText">Valid thru: 2026-12-31</span>
-                </div>
-                <button class="btn btn-violet" style="width:100%; justify-content:center;" onclick="openAdminPasswordModal()">🔐 Master Admin Panel</button>
+            <div class="action-btns">
+                <button class="btn btn-cash" onclick="recordSale('Cash')">Cash Aaya</button>
+                <button class="btn btn-udhaar" onclick="recordSale('Udhaar')">Udhaar Likho</button>
             </div>
-        </aside>
+        </div>
 
-        <main class="main-workspace">
-            <div class="topbar">
-                <div class="page-heading">
-                    <h2 id="pageTitle">POS Order Terminal</h2>
-                    <p id="pageSubtitle">Fast counter billing & instant slip printing</p>
-                </div>
-                <div class="topbar-actions">
-                    <button class="btn" onclick="loadDemoData()">⚡ Demo Data</button>
-                    <button class="btn btn-emerald" onclick="exportCSV()">📥 Export CSV</button>
-                    <button class="btn btn-violet" onclick="openAdminPasswordModal()">🔐 Admin</button>
-                </div>
+        <div class="card">
+            <div class="card-title">
+                <span>Recent Transactions</span>
+                <span id="txCount" style="color:var(--text-secondary);">0 entries</span>
             </div>
-
-            <div class="filter-ribbon">
-                <div class="filter-pills">
-                    <button class="filter-pill" onclick="setQuickFilter('today', this)">Today</button>
-                    <button class="filter-pill" onclick="setQuickFilter('yesterday', this)">Yesterday</button>
-                    <button class="filter-pill" onclick="setQuickFilter('7days', this)">Last 7 Days</button>
-                    <button class="filter-pill active" onclick="setQuickFilter('thisMonth', this)">This Month</button>
-                    <button class="filter-pill" onclick="setQuickFilter('all', this)">All-Time</button>
-                    <button class="filter-pill" onclick="setQuickFilter('custom', this)">Custom Range</button>
-                </div>
-                <div id="customDateBox" style="display:none; gap:6px; align-items:center;">
-                    <input type="date" id="filterStartDate" onchange="applyDateFilter()" style="padding:6px 8px; font-size:11px;">
-                    <span style="color:var(--text-secondary); font-size:11px;">to</span>
-                    <input type="date" id="filterEndDate" onchange="applyDateFilter()" style="padding:6px 8px; font-size:11px;">
-                </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable"></tbody>
+                </table>
             </div>
-
-            <div class="kpi-grid">
-                <div class="kpi-card" style="--kpi-accent: #10b981;"><div class="kpi-top"><span class="kpi-label">Total Sales</span><div class="kpi-icon">💰</div></div><div class="kpi-value" id="lblSales">Rs. 0</div></div>
-                <div class="kpi-card" style="--kpi-accent: #06b6d4;"><div class="kpi-top"><span class="kpi-label">Cash & Online</span><div class="kpi-icon">💳</div></div><div class="kpi-value" id="lblCash" style="color:#34d399;">Rs. 0</div></div>
-                <div class="kpi-card" style="--kpi-accent: #f43f5e;"><div class="kpi-top"><span class="kpi-label">Pending Udhaar</span><div class="kpi-icon">📒</div></div><div class="kpi-value" id="lblUdhaar" style="color:#fb7185;">Rs. 0</div></div>
-                <div class="kpi-card" style="--kpi-accent: #f59e0b;"><div class="kpi-top"><span class="kpi-label">Expenses</span><div class="kpi-icon">📉</div></div><div class="kpi-value" id="lblExpenses" style="color:#fbbf24;">Rs. 0</div></div>
-                <div class="kpi-card" style="--kpi-accent: #3b82f6;"><div class="kpi-top"><span class="kpi-label">Net Profit</span><div class="kpi-icon">📈</div></div><div class="kpi-value" id="lblNetProfit" style="color:#38bdf8;">Rs. 0</div></div>
-                <div class="kpi-card" style="--kpi-accent: #8b5cf6;"><div class="kpi-top"><span class="kpi-label">Margin</span><div class="kpi-icon">🎯</div></div><div class="kpi-value" id="lblMargin" style="color:#c4b5fd;">0%</div></div>
-            </div>
-
-            <!-- TAB 1: POS -->
-            <section id="posTab" class="view-section active">
-                <div class="pos-layout">
-                    <div class="glass-panel">
-                        <div class="panel-header">
-                            <h3>🍽️ Menu Selection</h3>
-                            <span style="font-size:11px; color:var(--text-secondary);">Tap to add quantities</span>
-                        </div>
-                        <div class="dish-grid" id="menuContainer"></div>
-                    </div>
-
-                    <div class="glass-panel">
-                        <div class="panel-header">
-                            <h3>🧾 Order Billing</h3>
-                            <button class="btn" style="padding:4px 8px; font-size:10px;" onclick="resetCart()">Clear Cart</button>
-                        </div>
-
-                        <div class="form-grid">
-                            <div class="form-group span-2">
-                                <label>Order Date & Time</label>
-                                <input type="datetime-local" id="entryDateTime">
-                            </div>
-                            <div class="form-group">
-                                <label>Customer Name (Mandatory)</label>
-                                <input type="text" id="custName" placeholder="Walk-in / Ali">
-                            </div>
-                            <div class="form-group">
-                                <label>Phone (Optional)</label>
-                                <input type="text" id="custPhone" placeholder="03XXXXXXXXX (Optional)">
-                            </div>
-                            <div class="form-group span-2">
-                                <label>Payment Method</label>
-                                <select id="payType">
-                                    <option value="Cash">💵 Cash Received</option>
-                                    <option value="Online">📱 Online Transfer (JazzCash/EasyPaisa)</option>
-                                    <option value="Udhaar">📒 Udhaar (Credit Register)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="cart-box">
-                            <span style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Current Order Items</span>
-                            <div class="cart-items" id="cartSummaryList"><span style="font-size:12px; color:var(--text-muted);">No dishes selected yet.</span></div>
-                        </div>
-
-                        <div class="checkout-footer">
-                            <div class="grand-total-row">
-                                <span>Grand Total</span>
-                                <strong id="totalCalculation">Rs. 0</strong>
-                            </div>
-                            <button class="btn btn-emerald" style="width:100%; justify-content:center; padding:13px; font-size:14px;" onclick="saveOrderEntry()">✅ Confirm & Save Order</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 2: CALENDAR -->
-            <section id="calendarTab" class="view-section">
-                <div class="glass-panel">
-                    <div class="panel-header">
-                        <h3>📅 Daily Calendar & Date Inspector</h3>
-                        <button class="btn btn-emerald" style="padding:6px 12px;" onclick="setCalendarToday()">Today</button>
-                    </div>
-
-                    <div style="max-width:300px; margin-bottom:18px;">
-                        <label>Choose Calendar Date</label>
-                        <input type="date" id="selectedCalendarDate" onchange="loadCalendarDayData()">
-                    </div>
-
-                    <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom:0;">
-                        <div class="kpi-card" style="--kpi-accent:#10b981;"><div class="kpi-top"><span class="kpi-label">Sales</span></div><div class="kpi-value" id="calLblSales">Rs. 0</div></div>
-                        <div class="kpi-card" style="--kpi-accent:#06b6d4;"><div class="kpi-top"><span class="kpi-label">Cash/Online</span></div><div class="kpi-value" id="calLblCash" style="color:#34d399;">Rs. 0</div></div>
-                        <div class="kpi-card" style="--kpi-accent:#f43f5e;"><div class="kpi-top"><span class="kpi-label">Udhaar</span></div><div class="kpi-value" id="calLblUdhaar" style="color:#fb7185;">Rs. 0</div></div>
-                        <div class="kpi-card" style="--kpi-accent:#f59e0b;"><div class="kpi-top"><span class="kpi-label">Expenses</span></div><div class="kpi-value" id="calLblExpenses" style="color:#fbbf24;">Rs. 0</div></div>
-                        <div class="kpi-card" style="--kpi-accent:#3b82f6;"><div class="kpi-top"><span class="kpi-label">Net Profit</span></div><div class="kpi-value" id="calLblNetProfit" style="color:#38bdf8;">Rs. 0</div></div>
-                    </div>
-                </div>
-
-                <div class="glass-panel" style="margin-top:16px;">
-                    <h4 style="font-size:14px; margin-bottom:8px;">🧾 Orders on <span id="calSelectedDateText" style="color:#34d399;"></span></h4>
-                    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Customer</th><th>Items Ordered</th><th>Total</th><th>Mode</th></tr></thead><tbody id="calSalesTableBody"></tbody></table></div>
-
-                    <h4 style="font-size:14px; margin-top:20px; margin-bottom:8px;">💸 Expenses on <span id="calSelectedExpDateText" style="color:#fbbf24;"></span></h4>
-                    <div class="table-wrap"><table><thead><tr><th>Expense Title</th><th>Category</th><th>Amount</th></tr></thead><tbody id="calExpTableBody"></tbody></table></div>
-                </div>
-            </section>
-
-            <!-- TAB 3: SALES LEDGER -->
-            <section id="salesTab" class="view-section">
-                <div class="glass-panel">
-                    <div class="panel-header" style="flex-wrap:wrap; gap:10px;">
-                        <h3>📊 Complete Sales Ledger</h3>
-                        <input type="text" id="salesSearchInput" onkeyup="applyDateFilter()" placeholder="🔍 Search customer or dish..." style="max-width:240px; padding:8px 12px;">
-                    </div>
-                    <div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Customer</th><th>Items Ordered</th><th>Total</th><th>Mode</th><th>Actions</th></tr></thead><tbody id="salesTableBody"></tbody></table></div>
-                </div>
-            </section>
-
-            <!-- TAB 4: UDHAAR -->
-            <section id="udhaarTab" class="view-section">
-                <div class="glass-panel">
-                    <div class="panel-header"><h3 style="color:#fb7185;">📒 Active Udhaar (Credit) Register</h3></div>
-                    <div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Customer Name</th><th>Phone</th><th>Items Taken</th><th>Udhaar Amount</th><th>Action</th></tr></thead><tbody id="udhaarTableBody"></tbody></table></div>
-                </div>
-            </section>
-
-            <!-- TAB 5: EXPENSES -->
-            <section id="expenseTab" class="view-section">
-                <div class="glass-panel">
-                    <div class="panel-header"><h3 style="color:#fbbf24;">💸 Daily Business Expense Manager</h3></div>
-                    <div class="form-grid" style="margin-bottom:16px;">
-                        <div class="form-group"><label>Expense Title</label><input type="text" id="expTitle" placeholder="e.g. Chicken, Rice, Gas"></div>
-                        <div class="form-group"><label>Amount (PKR)</label><input type="number" id="expAmount" placeholder="e.g. 5000"></div>
-                        <div class="form-group"><label>Category</label>
-                            <select id="expCategory">
-                                <option value="Raw Materials">Raw Materials & Groceries</option>
-                                <option value="Utilities">Utilities (Gas, Electricity)</option>
-                                <option value="Staff">Staff Wages & Salary</option>
-                                <option value="Maintenance">Shop Rent & Maintenance</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Date</label><input type="date" id="expDate"></div>
-                        <div class="form-group span-2"><button class="btn btn-gold" style="width:100%; justify-content:center; padding:12px;" onclick="saveExpense()">+ Record Expense Entry</button></div>
-                    </div>
-                    <div class="table-wrap"><table><thead><tr><th>Date</th><th>Expense Title</th><th>Category</th><th>Amount</th><th>Action</th></tr></thead><tbody id="expenseTableBody"></tbody></table></div>
-                </div>
-            </section>
-        </main>
+        </div>
     </div>
 
     <script>
-        let currentFilterRange = 'thisMonth';
-        let orderQuantities = {};
+        // --- LICENSE & APP CONFIG ---
+        let license = JSON.parse(localStorage.getItem('pos_license')) || {
+            installDate: Date.now(),
+            trialDays: 2,
+            status: 'active'
+        };
 
-        function setCurrentDateTime() {
-            let now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('entryDateTime').value = now.toISOString().slice(0,16);
-            document.getElementById('expDate').valueAsDate = new Date();
-            document.getElementById('selectedCalendarDate').valueAsDate = new Date();
+        // Default or Saved Menu Items
+        let menuItems = JSON.parse(localStorage.getItem('pos_menu_items')) || [
+            { id: 1, name: "Chicken Biryani (Plate)", price: 280 },
+            { id: 2, name: "Chicken Biryani (Full)", price: 500 },
+            { id: 3, name: "Chicken Biryani (Special)", price: 650 },
+            { id: 4, name: "Cold Drink / Raita", price: 70 }
+        ];
+
+        let transactions = JSON.parse(localStorage.getItem('naseeb_pos_tx')) || [];
+        let selectedItem = null;
+
+        function checkLicense() {
+            const now = Date.now();
+            const daysPassed = (now - license.installDate) / (1000 * 60 * 60 * 24);
+            const lockOverlay = document.getElementById('lockOverlay');
+            
+            if (license.status === 'locked' || daysPassed > license.trialDays) {
+                lockOverlay.style.display = 'flex';
+                if(daysPassed > license.trialDays && license.status === 'active') {
+                    document.getElementById('lockReason').innerText = `Aapka ${license.trialDays} din ka trial period khatam ho chuka hai. Mazeed use karne ke liye payment karein.`;
+                }
+            } else {
+                lockOverlay.style.display = 'none';
+            }
         }
-        setCurrentDateTime();
 
-        let defaultSettings = {
-            shopName: "Naseeb Biryani",
-            isLocked: false,
-            expiryDate: "2026-12-31",
-            prices: {
-                "Chicken Biryani (Full)": 350,
-                "Chicken Biryani (Double)": 5
+        function promptAdmin() {
+            const pass = prompt("Enter Developer Admin Password:");
+            if (pass === "7861122") {
+                document.getElementById('adminDays').value = license.trialDays;
+                document.getElementById('adminStatus').value = license.status;
+
+                // Calculate Month and Year sales for Analytics
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+
+                const monthTotal = transactions
+                    .filter(t => {
+                        const d = new Date(t.timestamp || t.id);
+                        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+                    })
+                    .reduce((sum, t) => sum + t.price, 0);
+
+                const yearTotal = transactions
+                    .filter(t => {
+                        const d = new Date(t.timestamp || t.id);
+                        return d.getFullYear() === currentYear;
+                    })
+                    .reduce((sum, t) => sum + t.price, 0);
+
+                document.getElementById('adminMonthSales').innerText = `Rs. ${monthTotal}`;
+                document.getElementById('adminYearSales').innerText = `Rs. ${yearTotal}`;
+
+                // Populate Admin Menu Editor
+                renderAdminMenuRows();
+
+                document.getElementById('adminModal').style.display = 'flex';
+            } else if(pass !== null) {
+                alert("Ghalat password!");
+            }
+        }
+
+        function renderAdminMenuRows() {
+            const container = document.getElementById('adminMenuContainer');
+            container.innerHTML = menuItems.map((item, index) => `
+                <div class="dish-row-admin">
+                    <input type="text" value="${item.name}" id="adminDishName_${index}" placeholder="Dish Name" style="flex:2;">
+                    <input type="number" value="${item.price}" id="adminDishPrice_${index}" placeholder="Price" style="flex:1;">
+                    <button onclick="removeMenuRow(${index})" style="background:var(--rose); border:none; color:#fff; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:11px;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function addMenuRow(name, price) {
+            menuItems.push({ id: Date.now(), name: name, price: price });
+            renderAdminMenuRows();
+        }
+
+        function removeMenuRow(index) {
+            menuItems.splice(index, 1);
+            renderAdminMenuRows();
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function saveAdminSettings() {
+            const newDays = parseInt(document.getElementById('adminDays').value);
+            const newStatus = document.getElementById('adminStatus').value;
+
+            if(isNaN(newDays) || newDays < 1) {
+                alert("Kam az kam 1 din hona chahiye!");
+                return;
+            }
+
+            // Save menu items from inputs
+            let updatedMenu = [];
+            for(let i = 0; i < menuItems.length; i++) {
+                const nameInput = document.getElementById(`adminDishName_${i}`);
+                const priceInput = document.getElementById(`adminDishPrice_${i}`);
+                if(nameInput && priceInput) {
+                    const name = nameInput.value.trim();
+                    const price = parseFloat(priceInput.value);
+                    if(name && !isNaN(price)) {
+                        updatedMenu.push({ id: Date.now() + i, name: name, price: price });
+                    }
+                }
+            }
+
+            if(updatedMenu.length === 0) {
+                alert("Kam az kam ek dish honi zaroori hai!");
+                return;
+            }
+
+            menuItems = updatedMenu;
+            license.trialDays = newDays;
+            license.status = newStatus;
+
+            localStorage.setItem('pos_license', JSON.stringify(license));
+            localStorage.setItem('pos_menu_items', JSON.stringify(menuItems));
+
+            closeAdmin();
+            checkLicense();
+            initMenu();
+            alert("Admin settings & menu successfully update ho gaye!");
+        }
+
+        // --- POS APP LOGIC ---
+        function initMenu() {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = menuItems.map(item => `
+                <div class="item-btn ${selectedItem?.id === item.id ? 'selected' : ''}" onclick="selectItem(${item.id})">
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">Rs. ${item.price}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectItem(id) {
+            selectedItem = menuItems.find(i => i.id === id);
+            document.getElementById('selItemName').innerText = selectedItem.name;
+            document.getElementById('selItemTotal').innerText = `Rs. ${selectedItem.price}`;
+            initMenu();
+        }
+
+        function recordSale(type) {
+            if (!selectedItem) {
+                alert('Pehle menu se item select karo bhai!');
+                return;
+            }
+
+            const now = new Date();
+            const newTx = {
+                id: Date.now(),
+                timestamp: now.getTime(),
+                name: selectedItem.name,
+                price: selectedItem.price,
+                type: type,
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            transactions.unshift(newTx);
+            saveAndRender();
+            
+            selectedItem = null;
+            document.getElementById('selItemName').innerText = "Kuch nahi";
+            document.getElementById('selItemTotal').innerText = "Rs. 0";
+            initMenu();
+        }
+
+        function saveAndRender() {I
+            localStorage.setItem('naseeb_pos_tx', JSON.stringify(transactions));
+            renderApp();
+        }
+
+        function renderApp() {
+            const tbody = document.getElementById('transactionTable');
+            tbody.innerHTML = transactions.map(t => `
+                <tr>
+                    <td>${t.name}<br><small style="color:var(--text-secondary); font-size:10px;">${t.date}</small></td>
+                    <td>Rs. ${t.price}</td>
+                    <td><span style="color:${t.type === 'Cash' ? 'var(--emera ral' : 'var(--rose)'}; font-weight:750;">${t.type}</span></td>
+                    <td>${t.time}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('txCount').innerText = `${transactions.length} entries`;
+
+            const todayStr = new Date().toLocaleDateString();
+            const todayTotal = transactions
+                .filter(t => t.date === todayStr)
+                .reduce((sum, t) => sum + t.price, 0);
+
+            document.getElementById('todayTotal').innerText = `Rs. ${todayTotal}`;
+        }
+
+        function confirmReset() {
+            if(confirm("Kya aap saari sales clear karna chahte hain?")) {
+                transactions = [];
+                saveAndRender();
+            }
+        }
+
+        // Run on load
+        checkLicense();
+        initMenu();
+        renderApp();
+    </script>
+</body>
+</html>

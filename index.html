@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart POS & SaaS Ledger</title>
+    <title>Naseeb Biryani - Enterprise POS & SaaS Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -50,16 +50,14 @@
         .btn-cash { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px var(--emerald-glow); }
         .btn-udhaar { background: linear-gradient(135deg, #f43f5e, #be123c); box-shadow: 0 4px 15px rgba(244,63,94,0.25); }
 
-        .table-wrap { overflow-x: auto; margin-top: 10px; max-height: 220px; overflow-y: auto; }
+        .table-wrap { overflow-x: auto; margin-top: 10px; max-height: 240px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
         th { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-card); }
         td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
 
-        /* Lock Screen Overlay */
         #lockOverlay { display: none; position: fixed; inset: 0; background: rgba(3, 5, 8, 0.96); backdrop-filter: blur(20px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         .lock-box { background: var(--bg-card); border: 2px solid rgba(244,63,94,0.4); border-radius: 20px; padding: 30px 20px; max-width: 400px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
 
-        /* Admin Modal */
         #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; padding: 16px; overflow-y: auto; }
         .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 12px; }
@@ -76,20 +74,17 @@
     </style>
 </head>
 <body>
-
-    <!-- LOCK / EXPIRED PAYWALL SCREEN -->
     <div id="lockOverlay">
         <div class="lock-box">
             <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
             <h2 style="color: #fff; font-size: 20px; font-weight: 800; margin-bottom: 8px;">Subscription Expired</h2>
             <p id="lockReason" style="color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Aapka trial period khatam ho gaya hai. Mazeed istamal karne ke liye developer se rabta karein.</p>
             <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 12px; border-radius: 12px; color: var(--emerald); font-weight: 700; font-size: 14px;">
-                📞 Contact: +92 XXXXXXXXXX
+                📞 Contact: +92 323 1224080
             </div>
         </div>
     </div>
 
-    <!-- ADVANCED DEVELOPER ADMIN PANEL MODAL -->
     <div id="adminModal">
         <div class="admin-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -97,7 +92,6 @@
                 <button onclick="closeAdmin()" style="background:none; border:none; color:var(--text-secondary); font-size:16px; cursor:pointer;">✕</button>
             </div>
             
-            <!-- Sales Analytics Stats -->
             <div class="stat-box">
                 <div class="stat-card">
                     <span>Mahina (Month)</span>
@@ -125,9 +119,7 @@
             <hr style="border:0; border-top:1px solid var(--border); margin: 12px 0;">
 
             <label style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; display:block;">Manage Menu Items & Prices</label>
-            <div id="adminMenuContainer" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;">
-                <!-- Dynamic Menu Rows injected here -->
-            </div>
+            <div id="adminMenuContainer" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;"></div>
             <button class="btn" style="background:rgba(255,255,255,0.06); width:100%; padding:8px; font-size:11px; margin-bottom:14px;" onclick="addMenuRow('', '')">+ Add New Dish</button>
 
             <div style="display:flex; gap:10px;">
@@ -137,7 +129,6 @@
         </div>
     </div>
 
-    <!-- MAIN APP SHELL -->
     <div class="app-container">
         <div class="header">
             <div class="brand">
@@ -179,7 +170,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
+                            <th>Item & Customer</th>
                             <th>Amount</th>
                             <th>Type</th>
                             <th>Time</th>
@@ -192,14 +183,12 @@
     </div>
 
     <script>
-        // --- LICENSE & APP CONFIG ---
         let license = JSON.parse(localStorage.getItem('pos_license')) || {
             installDate: Date.now(),
             trialDays: 2,
             status: 'active'
         };
 
-        // Default or Saved Menu Items
         let menuItems = JSON.parse(localStorage.getItem('pos_menu_items')) || [
             { id: 1, name: "Chicken Biryani (Plate)", price: 280 },
             { id: 2, name: "Chicken Biryani (Full)", price: 500 },
@@ -218,7 +207,7 @@
             if (license.status === 'locked' || daysPassed > license.trialDays) {
                 lockOverlay.style.display = 'flex';
                 if(daysPassed > license.trialDays && license.status === 'active') {
-                    document.getElementById('lockReason').innerText = `Aapka ${license.trialDays} din ka trial period khatam ho chuka hai. Mazeed use karne ke liye payment karein.`;
+                    document.getElementById('lockReason').innerText = `Aapka ${license.trialDays} din ka trial period khatam ho chuka hai.`;
                 }
             } else {
                 lockOverlay.style.display = 'none';
@@ -227,11 +216,10 @@
 
         function promptAdmin() {
             const pass = prompt("Enter Developer Admin Password:");
-            if (pass === "7861122") {
+            if (pass === "SURAKA123") {
                 document.getElementById('adminDays').value = license.trialDays;
                 document.getElementById('adminStatus').value = license.status;
 
-                // Calculate Month and Year sales for Analytics
                 const now = new Date();
                 const currentMonth = now.getMonth();
                 const currentYear = now.getFullYear();
@@ -253,9 +241,7 @@
                 document.getElementById('adminMonthSales').innerText = `Rs. ${monthTotal}`;
                 document.getElementById('adminYearSales').innerText = `Rs. ${yearTotal}`;
 
-                // Populate Admin Menu Editor
                 renderAdminMenuRows();
-
                 document.getElementById('adminModal').style.display = 'flex';
             } else if(pass !== null) {
                 alert("Ghalat password!");
@@ -296,7 +282,6 @@
                 return;
             }
 
-            // Save menu items from inputs
             let updatedMenu = [];
             for(let i = 0; i < menuItems.length; i++) {
                 const nameInput = document.getElementById(`adminDishName_${i}`);
@@ -328,7 +313,6 @@
             alert("Admin settings & menu successfully update ho gaye!");
         }
 
-        // --- POS APP LOGIC ---
         function initMenu() {
             const grid = document.getElementById('menuGrid');
             grid.innerHTML = menuItems.map(item => `
@@ -352,6 +336,12 @@
                 return;
             }
 
+            let customerName = "";
+            if (type === 'Udhaar') {
+                customerName = prompt("Udhaar lene wale ka naam likhein:", "Guest");
+                if (!customerName) customerName = "Unknown";
+            }
+
             const now = new Date();
             const newTx = {
                 id: Date.now(),
@@ -359,6 +349,7 @@
                 name: selectedItem.name,
                 price: selectedItem.price,
                 type: type,
+                customer: customerName,
                 date: now.toLocaleDateString(),
                 time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
@@ -372,7 +363,7 @@
             initMenu();
         }
 
-        function saveAndRender() {I
+        function saveAndRender() {
             localStorage.setItem('naseeb_pos_tx', JSON.stringify(transactions));
             renderApp();
         }
@@ -381,9 +372,9 @@
             const tbody = document.getElementById('transactionTable');
             tbody.innerHTML = transactions.map(t => `
                 <tr>
-                    <td>${t.name}<br><small style="color:var(--text-secondary); font-size:10px;">${t.date}</small></td>
+                    <td><strong>${t.name}</strong>${t.customer ? `<br><small style="color:var(--cyan);">👤 ${t.customer}</small>` : ''}<br><small style="color:var(--text-secondary); font-size:9px;">${t.date}</small></td>
                     <td>Rs. ${t.price}</td>
-                    <td><span style="color:${t.type === 'Cash' ? 'var(--emera ral' : 'var(--rose)'}; font-weight:750;">${t.type}</span></td>
+                    <td><span style="color:${t.type === 'Cash' ? 'var(--emerald)' : 'var(--rose)'}; font-weight:750;">${t.type}</span></td>
                     <td>${t.time}</td>
                 </tr>
             `).join('');
@@ -405,7 +396,6 @@
             }
         }
 
-        // Run on load
         checkLicense();
         initMenu();
         renderApp();

@@ -1,311 +1,522 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naseeb Biryani - Enterprise SaaS POS & Financial Ledger</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#07090e',
-                            card: '#111827',
-                            border: '#1f2937',
-                            green: '#10b981',
-                            blue: '#0ea5e9',
-                            red: '#ef4444',
-                            amber: '#f59e0b',
-                            purple: '#8b5cf6'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Naseeb Biryani — Enterprise Cloud POS & SaaS Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-base: #040609;
+            --bg-surface: #0a0e17;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-elevated: rgba(30, 41, 59, 0.75);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            
+            --brand-emerald: #10b981;
+            --brand-emerald-glow: rgba(16, 185, 129, 0.3);
+            --brand-gold: #f59e0b;
+            --brand-cyan: #06b6d4;
+            --brand-violet: #8b5cf6;
+            --brand-rose: #f43f5e;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --radius-xl: 20px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
         body {
-            background-color: #07090e;
-            color: #f3f4f6;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 15%, rgba(245, 158, 11, 0.08) 0%, transparent 38%),
+                radial-gradient(circle at 50% 95%, rgba(6, 182, 212, 0.07) 0%, transparent 45%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
         }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: linear-gradient(145deg, rgba(31, 41, 55, 0.5), rgba(17, 24, 39, 0.8));
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
-        .glow-blue { box-shadow: 0 0 25px rgba(14, 165, 233, 0.25); }
-        
-        /* Custom Scrollbars */
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: #07090e; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
+
+        .app-shell { display: flex; min-height: 100vh; }
+        @media (max-width: 900px) { .app-shell { flex-direction: column; } }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(8, 12, 19, 0.96);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-subtle);
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -280px; height: 100%; width: 280px; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+            .sidebar.mobile-open { left: 0; }
+        }
+
+        .brand-box { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
+        .brand-logo { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--brand-emerald), #059669); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 6px 20px var(--brand-emerald-glow); flex-shrink: 0; }
+        .brand-title h1 { font-size: 16px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+        .brand-title span { font-size: 10px; font-weight: 600; color: var(--brand-emerald); text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+        .live-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-emerald); box-shadow: 0 0 8px var(--brand-emerald); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
+
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; overflow-y: auto; flex-grow: 1; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--radius-md); background: transparent; border: 1px solid transparent; color: var(--text-secondary); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-align: left; width: 100%; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
+        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.03)); border-color: rgba(16, 185, 129, 0.35); color: #34d399; }
+
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 10px; }
+        .saas-pill { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.22); padding: 10px 12px; border-radius: var(--radius-md); font-size: 11px; }
+        .saas-pill strong { color: #34d399; display: block; margin-bottom: 2px; }
+        .saas-pill span { color: var(--text-secondary); font-size: 10px; }
+
+        /* Mobile Header */
+        .mobile-header { display: none; background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-subtle); padding: 12px 16px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
+        @media (max-width: 900px) { .mobile-header { display: flex; } }
+        .mobile-menu-btn { background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 95; }
+        .sidebar-overlay.active { display: block; }
+
+        /* Main Workspace */
+        .main-workspace { flex-grow: 1; padding: 24px 28px; max-width: 1320px; width: 100%; margin: 0 auto; overflow-x: hidden; }
+        @media (max-width: 768px) { .main-workspace { padding: 16px 12px; } }
+
+        .topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+        .page-heading h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+        .page-heading p { font-size: 12px; color: var(--text-secondary); }
+        .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .btn { padding: 10px 16px; border-radius: var(--radius-md); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border-subtle); background: var(--bg-elevated); color: var(--text-primary); display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; white-space: nowrap; }
+        .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.2); }
+        .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; box-shadow: 0 6px 18px var(--brand-emerald-glow); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #040609; }
+        .btn-violet { background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+        .btn-rose { background: rgba(244, 63, 94, 0.18); border-color: rgba(244, 63, 94, 0.4); color: #fda4af; }
+
+        /* Filter Ribbon */
+        .filter-ribbon { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-pill { padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.04); color: var(--text-secondary); border: 1px solid transparent; cursor: pointer; transition: 0.2s; }
+        .filter-pill:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .filter-pill.active { background: rgba(16, 185, 129, 0.18); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
+
+        /* KPI Bento Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 24px; }
+        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .kpi-card { background: var(--bg-card); backdrop-filter: blur(14px); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 16px; position: relative; overflow: hidden; transition: transform 0.2s ease; }
+        .kpi-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--kpi-accent, var(--brand-emerald)); opacity: 0.85; }
+        .kpi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-secondary); }
+        .kpi-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: rgba(255,255,255,0.05); }
+        .kpi-value { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
+
+        /* POS Split */
+        .pos-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .pos-layout { grid-template-columns: 1fr; } }
+
+        .glass-panel { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 20px; box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.5); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+        .panel-header h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+        .dish-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 2px; }
+        .dish-card { background: rgba(12, 18, 32, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all 0.2s ease; cursor: pointer; user-select: none; }
+        .dish-card:hover { border-color: rgba(16, 185, 129, 0.4); background: rgba(12, 18, 32, 0.95); }
+        .dish-card.active-dish { border-color: var(--brand-emerald); background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(12, 18, 32, 0.95)); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15); }
+        .dish-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--brand-gold); background: rgba(245, 158, 11, 0.12); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+        .dish-name { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.25; }
+        .dish-price { font-size: 15px; font-weight: 800; color: #34d399; margin-top: 2px; }
+
+        .stepper { display: flex; align-items: center; justify-content: space-between; background: rgba(4, 6, 9, 0.8); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 4px; }
+        .step-btn { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .step-btn:hover { background: var(--brand-emerald); }
+        .step-val { font-size: 14px; font-weight: 800; min-width: 24px; text-align: center; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .span-2 { grid-column: span 2; }
+        @media (max-width: 500px) { .span-2 { grid-column: span 1; } }
+
+        label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+        input, select { width: 100%; padding: 11px 12px; background: rgba(4, 6, 9, 0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: #fff; font-family: inherit; font-size: 13px; outline: none; transition: 0.2s; }
+        input:focus, select:focus { border-color: var(--brand-emerald); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+
+        .cart-box { margin-top: 14px; background: rgba(4, 6, 9, 0.7); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: var(--radius-md); padding: 14px; }
+        .cart-items { max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+        .cart-row { display: flex; justify-content: space-between; font-size: 12px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .checkout-footer { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+        .grand-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .grand-total-row span { font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
+        .grand-total-row strong { font-size: 24px; font-weight: 800; color: #34d399; letter-spacing: -0.4px; }
+
+        .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); background: rgba(10, 14, 23, 0.6); margin-top: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+        th { background: rgba(15, 23, 42, 0.95); color: var(--text-secondary); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+        td { padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-primary); vertical-align: middle; }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .badge { padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+        .badge-cash { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-online { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .badge-udhaar { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        .view-section { display: none; animation: fadeIn 0.2s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modals */
+        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(2, 4, 8, 0.88); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
+        .modal-card { background: #0d1320; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-xl); padding: 24px; width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); }
+        .admin-block { background: rgba(4, 6, 9, 0.65); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px; }
+
+        /* VIP SaaS Paywall / Lock Screen */
+        #lockScreen { display: none; position: fixed; inset: 0; background: rgba(3, 5, 8, 0.96); backdrop-filter: blur(24px); z-index: 3000; justify-content: center; align-items: center; padding: 16px; text-align: center; }
+        .lock-box { background: linear-gradient(145deg, #0d1320, #141d30); border: 2px solid rgba(244, 63, 94, 0.4); border-radius: 24px; padding: 36px 28px; max-width: 480px; width: 100%; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(244, 63, 94, 0.15); position: relative; overflow: hidden; }
+        .lock-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #f43f5e, #f59e0b, #10b981); }
 
         @media print {
             body * { visibility: hidden; }
-            #printableReceipt, #printableReceipt * { visibility: visible; }
-            #printableReceipt {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                color: #000;
-                background: #fff;
-                padding: 10px;
-            }
+            #receiptPrintArea, #receiptPrintArea * { visibility: visible; }
+            #receiptPrintArea { position: absolute; left: 0; top: 0; width: 280px; background: #fff; color: #000; padding: 14px; font-family: monospace; }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+<body>
 
-    <!-- SaaS Subscription Remote Lock Overlay -->
-    <div id="saasLockOverlay" class="hidden fixed inset-0 z-[9999] bg-[#05070a]/98 backdrop-blur-2xl flex items-center justify-center p-4">
-        <div class="glass-panel max-w-md w-full p-8 rounded-3xl border-2 border-red-500/50 text-center shadow-2xl relative overflow-hidden">
-            <div class="w-20 h-20 bg-red-500/20 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-4xl border border-red-500/30 animate-pulse">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h1 class="text-2xl font-black text-red-500 font-display mb-1">⚠️ SYSTEM LOCKED</h1>
-            <span class="inline-block px-3 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded-full border border-red-500/30 mb-4">
-                Mahana Subscription Pending
-            </span>
-            <p class="text-slate-300 text-xs leading-relaxed mb-6">
-                Aapka mahana subscription status pending hai. System dobara khulwane ke liye agency se rabta karein!
-            </p>
+    <!-- VIP SUBSCRIPTION LOCK PAYWALL -->
+    <div id="lockScreen">
+        <div class="lock-box">
+            <div style="width: 64px; height: 64px; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px auto;">⏳</div>
+            <h2 style="color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.4px;">Maahana Subscription Khatam Ho Gayi Hai!</h2>
+            <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin-bottom: 16px;">Aapka pichla aur aane wala saara data <strong>100% Secure & Safe</strong> hai. Subscription upgrade karne ke baad aapka poora data aur pichle mahino ki entries foran wapas show ho jayengi.</p>
             
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-left space-y-2 mb-6 text-xs">
-                <div class="flex justify-between"><span class="text-slate-400">Agency Helpline:</span> <strong class="text-emerald-400 font-mono">+92 300 1234567</strong></div>
-                <div class="flex justify-between"><span class="text-slate-400">Support Status:</span> <strong class="text-blue-400 font-mono">Suspended</strong></div>
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left;">
+                <div style="font-size: 11px; color: #34d399; font-weight: 700; margin-bottom: 4px;">🛡️ Data Guarantee Security:</div>
+                <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">Aapka 6-8 mahine ka data browser ki LocalStorage mein mehfooz hai. Lock hone se data delete nahi hota!</div>
             </div>
 
-            <button onclick="promptAdminUnlock()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition-all border border-slate-700">
-                <i class="fa-solid fa-key text-amber-400 mr-1.5"></i> Admin Emergency Unlock
-            </button>
+            <button class="btn btn-emerald" style="width: 100%; justify-content: center; padding: 14px; font-size: 14px; margin-bottom: 10px;" onclick="openUpgradePrompt()">🚀 Maahana Subscription Upgrade Karein</button>
+            <button class="btn btn-violet" style="width: 100%; justify-content: center; padding: 11px; font-size: 12px;" onclick="openAdminPasswordModal()">🔐 Admin Portal Login</button>
         </div>
     </div>
 
-    <!-- Notification Toast Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="receiptPrintArea" style="display:none;"></div>
 
-    <!-- Top Navigation Header -->
-    <header class="glass-panel sticky top-0 z-40 border-b border-slate-800 px-4 lg:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            
-            <!-- Brand Info -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-blue-500 rounded-2xl flex items-center justify-center text-white text-lg shadow-lg glow-emerald">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
+  <!-- ADMIN PASSWORD MODAL -->
+    <div id="adminPassModal" class="modal-backdrop">
+        <div class="modal-card" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🔑</div>
+            <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Admin Access Required</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Master password manually type karein (Default: suraka123)</p>
+            <input type="password" id="masterPasswordInput" placeholder="Enter master password..." style="text-align: center; font-size: 16px; margin-bottom: 14px;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-emerald" style="flex: 1; justify-content: center;" onclick="verifyAdminPassword()">Verify & Open</button>
+                <button class="btn" style="flex: 1; justify-content: center;" onclick="closeAdminModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MASTER ADMIN PANEL MODAL -->
+    <div id="adminModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h1 id="shopTitleHeader" class="text-lg font-black font-display tracking-tight text-white uppercase">NASEEB BIRYANI</h1>
-                        <span class="px-2 py-0.5 text-[9px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md">ENTERPRISE SaaS</span>
-                    </div>
-                    <p id="shopTaglineHeader" class="text-[11px] text-slate-400 font-medium">Cloud POS, Expenses & Udhaar Ledger</p>
+                    <h3 style="font-size:18px; font-weight:800; color:#fff;">🔐 Master SaaS & Admin Control</h3>
+                    <p style="font-size:11px; color:var(--text-secondary);">Manage subscription lock, expiry date, and live menu pricing.</p>
                 </div>
+                <button class="btn" onclick="closeAdminModals()">✕</button>
             </div>
 
-            <!-- Tab Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-1 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-bold">
-                <button onclick="switchTab('pos')" id="tabBtn_pos" class="px-3.5 py-2 rounded-xl text-white bg-blue-600 transition-all">
-                    <i class="fa-solid fa-cash-register mr-1.5"></i> POS Terminal
-                </button>
-                <button onclick="switchTab('ledger')" id="tabBtn_ledger" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-receipt mr-1.5"></i> Sales Ledger
-                </button>
-                <button onclick="switchTab('udhaar')" id="tabBtn_udhaar" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-book-bookmark mr-1.5"></i> Udhaar Book
-                </button>
-                <button onclick="switchTab('expenses')" id="tabBtn_expenses" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-wallet mr-1.5"></i> Expenses
-                </button>
-            </nav>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center space-x-2">
-                <button onclick="exportCSV()" class="px-3 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all">
-                    <i class="fa-solid fa-file-csv mr-1"></i> Export CSV
-                </button>
-                <button onclick="openAdminModal()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-md">
-                    <i class="fa-solid fa-user-shield mr-1"></i> Admin Panel
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Row -->
-        <div class="flex md:hidden items-center justify-around mt-3 pt-2 border-t border-slate-800 text-[11px] font-bold">
-            <button onclick="switchTab('pos')" id="mobTabBtn_pos" class="text-blue-400"><i class="fa-solid fa-cash-register"></i> POS</button>
-            <button onclick="switchTab('ledger')" id="mobTabBtn_ledger" class="text-slate-400"><i class="fa-solid fa-receipt"></i> Ledger</button>
-            <button onclick="switchTab('udhaar')" id="mobTabBtn_udhaar" class="text-slate-400"><i class="fa-solid fa-book-bookmark"></i> Udhaar</button>
-            <button onclick="switchTab('expenses')" id="mobTabBtn_expenses" class="text-slate-400"><i class="fa-solid fa-wallet"></i> Expenses</button>
-        </div>
-    </header>
-
-    <!-- Main Workspace -->
-    <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 space-y-6 flex-grow">
-
-        <!-- Global Summary Metrics Cards -->
-        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Sales</span>
-                <div class="text-lg sm:text-xl font-black text-blue-400 font-display mt-0.5" id="metricTotalSales">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Gross Revenue</div>
-            </div>
-
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Net Profit</span>
-                <div class="text-lg sm:text-xl font-black text-emerald-400 font-display mt-0.5" id="metricNetProfit">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Sales - Expenses</div>
-            </div>
-
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cash Paid</span>
-                <div class="text-lg sm:text-xl font-black text-emerald-300 font-display mt-0.5" id="metricCashSales">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Cash in Register</div>
-            </div>
-
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Online Transfer</span>
-                <div class="text-lg sm:text-xl font-black text-purple-400 font-display mt-0.5" id="metricOnlineSales">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Bank / JazzCash</div>
-            </div>
-
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Udhaar</span>
-                <div class="text-lg sm:text-xl font-black text-red-400 font-display mt-0.5" id="metricUdhaarSales">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Pending Unpaid</div>
-            </div>
-
-            <div class="glass-card p-3.5 rounded-2xl border border-slate-800">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Expenses</span>
-                <div class="text-lg sm:text-xl font-black text-amber-400 font-display mt-0.5" id="metricTotalExpenses">Rs. 0</div>
-                <div class="text-[9px] text-slate-500 mt-1">Operational Costs</div>
-            </div>
-        </section>
-
-        <!-- TAB 1: POS TERMINAL -->
-        <div id="view_pos" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- Left Side Menu Grid -->
-            <div class="lg:col-span-7 space-y-4">
-                <div class="glass-panel p-4 rounded-2xl space-y-3">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="relative flex-1">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                            <input type="text" id="menuSearchInput" oninput="renderMenuGrid()" placeholder="Search biryani, drinks, extras..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs"></div>
-                </div>
-
-                <div id="menuItemsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[560px] overflow-y-auto pr-1"></div>
-            </div>
-
-            <!-- Right Side Cart Checkout -->
-            <div class="lg:col-span-5 space-y-4">
-                <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col justify-between min-h-[560px]">
+            <div class="admin-block">
+                <h4 style="color:var(--brand-gold); font-size:13px; margin-bottom:10px;">👑 Client Subscription & Remote Lock</h4>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                     <div>
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                            <h2 class="font-bold text-white text-sm flex items-center"><i class="fa-solid fa-cart-shopping text-blue-400 mr-2"></i> Current Order Basket</h2>
-                            <button onclick="clearCart()" class="text-xs text-red-400 hover:text-red-300 font-semibold"><i class="fa-solid fa-trash-can mr-1"></i> Clear Cart</button>
-                        </div>
+                        <span style="font-size:10px; color:var(--text-secondary); display:block;">Current Portal Status</span>
+                        <span id="subStatusBadge" class="badge badge-cash" style="margin-top:3px; font-size:11px;">● UNLOCKED (ACTIVE)</span>
+                    </div>
+                    <button class="btn btn-rose" id="lockToggleBtn" onclick="toggleSystemLock()">🔒 Lock Client Website</button>
+                </div>
+                <div class="form-group" style="margin-top:12px;">
+                    <label>Subscription Expiry Date</label>
+                    <input type="date" id="adminExpiryDate">
+                </div>
+            </div>
 
-                        <!-- Customer Details (Name & Phone marked Optional for Walk-ins) -->
-                        <div class="grid grid-cols-2 gap-2 my-4">
-                            <div>
-                                <label class="text-[11px] font-semibold text-slate-400 block mb-1">Customer Name <span class="text-slate-500 font-normal">(Optional)</span></label>
-                                <input type="text" id="custNameInput" placeholder="Walk-in Customer" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-semibold text-slate-400 block mb-1">Phone Number <span class="text-slate-500 font-normal">(Optional)</span></label>
-                                <input type="text" id="custPhoneInput" placeholder="0300-1234567" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
-                            </div>
-                        </div>
+            <div class="admin-block">
+                <h4 style="color:var(--brand-cyan); font-size:13px; margin-bottom:10px;">🏪 Business Identity</h4>
+                <div class="form-group">
+                    <label>Restaurant / Shop Name</label>
+                    <input type="text" id="adminShopName" value="Naseeb Biryani">
+                </div>
+            </div>
 
-                        <!-- Cart Items List -->
-                        <div id="cartItemsList" class="space-y-2 max-h-[240px] overflow-y-auto pr-1 my-2"></div>
+            <div class="admin-block">
+                <h4 style="color:#34d399; font-size:13px; margin-bottom:4px;">📋 Menu & Live Price Manager</h4>
+                <div id="adminMenuEditor" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:12px;"></div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <input type="text" id="newMenuItemName" placeholder="New Dish Name" style="flex:2; min-width:140px;">
+                    <input type="number" id="newMenuItemPrice" placeholder="Price (PKR)" style="flex:1; min-width:90px;">
+                    <button class="btn btn-emerald" onclick="addNewMenuItem()">+ Add</button>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:16px;">
+                <button class="btn btn-emerald" style="flex:2; justify-content:center; padding:12px;" onclick="saveAdminSettings()">💾 Save & Apply Changes</button>
+                <button class="btn" style="flex:1; justify-content:center; padding:12px;" onclick="closeAdminModals()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+            <span style="font-weight:800; font-size:15px; color:#fff;" id="mobileHeaderTitle">Naseeb Biryani</span>
+        </div>
+        <button class="btn btn-violet" style="padding:6px 10px; font-size:11px;" onclick="openAdminPasswordModal()">🔐 Admin</button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- APP SHELL -->
+    <div class="app-shell">
+        <aside class="sidebar" id="appSidebar">
+            <div>
+                <div class="brand-box">
+                    <div class="brand-logo">👑</div>
+                    <div class="brand-title">
+                        <h1 id="displayShopName">NASEEB BIRYANI</h1>
+                        <span><i class="live-pulse" id="headerStatusDot"></i> Enterprise POS</span>
+                    </div>
+                </div>
+
+                <nav class="nav-menu">
+                    <button class="nav-item active" onclick="switchTab('posTab', this, 'POS Order Terminal', 'Fast counter billing & instant slip printing')">🛒 POS Order Terminal</button>
+                    <button class="nav-item" onclick="switchTab('calendarTab', this, 'Daily Calendar Explorer', 'Track day-by-day sales, expenses & profit')">📅 Daily Calendar</button>
+                    <button class="nav-item" onclick="switchTab('salesTab', this, 'Complete Sales Ledger', 'Searchable history of all orders & payments')">📊 Sales Ledger</button>
+                    <button class="nav-item" onclick="switchTab('udhaarTab', this, 'Udhaar & Credit Register', 'Manage customer credit balances & settlements')">📒 Udhaar Register</button>
+                    <button class="nav-item" onclick="switchTab('expenseTab', this, 'Expense & Profit Manager', 'Log daily raw material & utility expenses')">💸 Expense Manager</button>
+                </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="saas-pill">
+                    <strong>● 100% Secure Data Active</strong>
+                    <span id="sidebarExpiryText">Valid thru: 2026-12-31</span>
+                </div>
+                <button class="btn btn-violet" style="width:100%; justify-content:center;" onclick="openAdminPasswordModal()">🔐 Master Admin Panel</button>
+            </div>
+        </aside>
+
+        <main class="main-workspace">
+            <div class="topbar">
+                <div class="page-heading">
+                    <h2 id="pageTitle">POS Order Terminal</h2>
+                    <p id="pageSubtitle">Fast counter billing & instant slip printing</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn" onclick="loadDemoData()">⚡ Demo Data</button>
+                    <button class="btn btn-emerald" onclick="exportCSV()">📥 Export CSV</button>
+                    <button class="btn btn-violet" onclick="openAdminPasswordModal()">🔐 Admin</button>
+                </div>
+            </div>
+
+            <div class="filter-ribbon">
+                <div class="filter-pills">
+                    <button class="filter-pill" onclick="setQuickFilter('today', this)">Today</button>
+                    <button class="filter-pill" onclick="setQuickFilter('yesterday', this)">Yesterday</button>
+                    <button class="filter-pill" onclick="setQuickFilter('7days', this)">Last 7 Days</button>
+                    <button class="filter-pill active" onclick="setQuickFilter('thisMonth', this)">This Month</button>
+                    <button class="filter-pill" onclick="setQuickFilter('all', this)">All-Time</button>
+                    <button class="filter-pill" onclick="setQuickFilter('custom', this)">Custom Range</button>
+                </div>
+                <div id="customDateBox" style="display:none; gap:6px; align-items:center;">
+                    <input type="date" id="filterStartDate" onchange="applyDateFilter()" style="padding:6px 8px; font-size:11px;">
+                    <span style="color:var(--text-secondary); font-size:11px;">to</span>
+                    <input type="date" id="filterEndDate" onchange="applyDateFilter()" style="padding:6px 8px; font-size:11px;">
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card" style="--kpi-accent: #10b981;"><div class="kpi-top"><span class="kpi-label">Total Sales</span><div class="kpi-icon">💰</div></div><div class="kpi-value" id="lblSales">Rs. 0</div></div>
+                <div class="kpi-card" style="--kpi-accent: #06b6d4;"><div class="kpi-top"><span class="kpi-label">Cash & Online</span><div class="kpi-icon">💳</div></div><div class="kpi-value" id="lblCash" style="color:#34d399;">Rs. 0</div></div>
+                <div class="kpi-card" style="--kpi-accent: #f43f5e;"><div class="kpi-top"><span class="kpi-label">Pending Udhaar</span><div class="kpi-icon">📒</div></div><div class="kpi-value" id="lblUdhaar" style="color:#fb7185;">Rs. 0</div></div>
+                <div class="kpi-card" style="--kpi-accent: #f59e0b;"><div class="kpi-top"><span class="kpi-label">Expenses</span><div class="kpi-icon">📉</div></div><div class="kpi-value" id="lblExpenses" style="color:#fbbf24;">Rs. 0</div></div>
+                <div class="kpi-card" style="--kpi-accent: #3b82f6;"><div class="kpi-top"><span class="kpi-label">Net Profit</span><div class="kpi-icon">📈</div></div><div class="kpi-value" id="lblNetProfit" style="color:#38bdf8;">Rs. 0</div></div>
+                <div class="kpi-card" style="--kpi-accent: #8b5cf6;"><div class="kpi-top"><span class="kpi-label">Margin</span><div class="kpi-icon">🎯</div></div><div class="kpi-value" id="lblMargin" style="color:#c4b5fd;">0%</div></div>
+            </div>
+
+            <!-- TAB 1: POS -->
+            <section id="posTab" class="view-section active">
+                <div class="pos-layout">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h3>🍽️ Menu Selection</h3>
+                            <span style="font-size:11px; color:var(--text-secondary);">Tap to add quantities</span>
+                        </div>
+                        <div class="dish-grid" id="menuContainer"></div>
                     </div>
 
-                    <div class="space-y-3 pt-3 border-t border-slate-800">
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5 text-xs">
-                            <div class="flex justify-between text-slate-400"><span>Subtotal</span><span font-mono id="cartSubtotal">Rs. 0</span></div>
-                            <div class="flex justify-between items-center text-slate-400">
-                                <span>Discount (PKR)</span>
-                                <input type="number" id="cartDiscount" value="0" min="0" oninput="calculateCartTotals()" class="w-20 bg-slate-950 border border-slate-800 rounded px-2 py-0.5 text-right text-xs text-emerald-400">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h3>🧾 Order Billing</h3>
+                            <button class="btn" style="padding:4px 8px; font-size:10px;" onclick="resetCart()">Clear Cart</button>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group span-2">
+                                <label>Order Date & Time</label>
+                                <input type="datetime-local" id="entryDateTime">
                             </div>
-                            <div class="flex justify-between text-slate-200 font-bold text-sm pt-1 border-t border-slate-800">
+                            <div class="form-group">
+                                <label>Customer Name (Mandatory)</label>
+                                <input type="text" id="custName" placeholder="Walk-in / Ali">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone (Optional)</label>
+                                <input type="text" id="custPhone" placeholder="03XXXXXXXXX (Optional)">
+                            </div>
+                            <div class="form-group span-2">
+                                <label>Payment Method</label>
+                                <select id="payType">
+                                    <option value="Cash">💵 Cash Received</option>
+                                    <option value="Online">📱 Online Transfer (JazzCash/EasyPaisa)</option>
+                                    <option value="Udhaar">📒 Udhaar (Credit Register)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="cart-box">
+                            <span style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Current Order Items</span>
+                            <div class="cart-items" id="cartSummaryList"><span style="font-size:12px; color:var(--text-muted);">No dishes selected yet.</span></div>
+                        </div>
+
+                        <div class="checkout-footer">
+                            <div class="grand-total-row">
                                 <span>Grand Total</span>
-                                <span class="text-blue-400 font-mono text-base" id="cartGrandTotal">Rs. 0</span>
+                                <strong id="totalCalculation">Rs. 0</strong>
                             </div>
+                            <button class="btn btn-emerald" style="width:100%; justify-content:center; padding:13px; font-size:14px;" onclick="saveOrderEntry()">✅ Confirm & Save Order</button>
                         </div>
-
-                        <!-- Payment Mode Selector -->
-                        <div>
-                            <label class="text-[11px] font-semibold text-slate-400 block mb-1">Payment Mode</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button type="button" onclick="setPaymentMode('Cash')" id="payModeCash" class="py-2 rounded-xl border text-xs font-bold border-emerald-500/50 bg-emerald-950/40 text-emerald-300">
-                                    <i class="fa-solid fa-money-bill-wave mr-1"></i> Cash
-                                </button>
-                                <button type="button" onclick="setPaymentMode('Online')" id="payModeOnline" class="py-2 rounded-xl border text-xs font-bold border-slate-800 bg-slate-900 text-slate-400">
-                                    <i class="fa-solid fa-mobile-screen mr-1"></i> Online
-                                </button>
-                                <button type="button" onclick="setPaymentMode('Udhaar')" id="payModeUdhaar" class="py-2 rounded-xl border text-xs font-bold border-slate-800 bg-slate-900 text-slate-400">
-                                    <i class="fa-solid fa-book-bookmark mr-1"></i> Udhaar
-                                </button>
-                            </div>
-                        </div>
-
-                        <button onclick="processCheckout()" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm rounded-xl shadow-lg glow-emerald transition-all active:scale-95 flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-circle-check text-lg"></i>
-                            <span>SAVE ORDER & PRINT RECEIPT</span>
-                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- TAB 2: SALES LEDGER WITH CALENDAR & FILTERS -->
-        <div id="view_ledger" class="tab-content hidden space-y-4">
-            <div class="glass-panel p-5 rounded-3xl space-y-4">
-                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                    <div>
-                        <h2 class="text-base font-black text-white flex items-center"><i class="fa-solid fa-receipt text-blue-400 mr-2"></i> Sales & Revenue Ledger</h2>
-                        <p class="text-xs text-slate-400">Filter sales by date range, payment types, or search customer name</p>
+            <!-- TAB 2: CALENDAR -->
+            <section id="calendarTab" class="view-section">
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h3>📅 Daily Calendar & Date Inspector</h3>
+                        <button class="btn btn-emerald" style="padding:6px 12px;" onclick="setCalendarToday()">Today</button>
                     </div>
 
-                    <!-- Advanced Filters Bar -->
-                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                        <!-- Calendar Range Pickers -->
-                        <div class="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl px-2 py-1 text-xs">
-                            <span class="text-slate-400 text-[10px]">From:</span>
-                            <input type="date" id="filterFromDate" onchange="renderLedgerTable()" class="bg-transparent text-white focus:outline-none">
-                            <span class="text-slate-400 text-[10px]">To:</span>
-                            <input type="date" id="filterToDate" onchange="renderLedgerTable()" class="bg-transparent text-white focus:outline-none">
-                        </div>
+                    <div style="max-width:300px; margin-bottom:18px;">
+                        <label>Choose Calendar Date</label>
+                        <input type="date" id="selectedCalendarDate" onchange="loadCalendarDayData()">
+                    </div>
 
-                        <select id="filterPayType" onchange="renderLedgerTable()" class="bg-slate-900 border border-slate-800 text-xs text-slate-300 rounded-xl px-3 py-2">
-                            <option value="all">All Modes</option>
-                            <option value="Cash">Cash Only</option>
-                            <option value="Online">Online Transfer</option>
-   
+                    <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom:0;">
+                        <div class="kpi-card" style="--kpi-accent:#10b981;"><div class="kpi-top"><span class="kpi-label">Sales</span></div><div class="kpi-value" id="calLblSales">Rs. 0</div></div>
+                        <div class="kpi-card" style="--kpi-accent:#06b6d4;"><div class="kpi-top"><span class="kpi-label">Cash/Online</span></div><div class="kpi-value" id="calLblCash" style="color:#34d399;">Rs. 0</div></div>
+                        <div class="kpi-card" style="--kpi-accent:#f43f5e;"><div class="kpi-top"><span class="kpi-label">Udhaar</span></div><div class="kpi-value" id="calLblUdhaar" style="color:#fb7185;">Rs. 0</div></div>
+                        <div class="kpi-card" style="--kpi-accent:#f59e0b;"><div class="kpi-top"><span class="kpi-label">Expenses</span></div><div class="kpi-value" id="calLblExpenses" style="color:#fbbf24;">Rs. 0</div></div>
+                        <div class="kpi-card" style="--kpi-accent:#3b82f6;"><div class="kpi-top"><span class="kpi-label">Net Profit</span></div><div class="kpi-value" id="calLblNetProfit" style="color:#38bdf8;">Rs. 0</div></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="margin-top:16px;">
+                    <h4 style="font-size:14px; margin-bottom:8px;">🧾 Orders on <span id="calSelectedDateText" style="color:#34d399;"></span></h4>
+                    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Customer</th><th>Items Ordered</th><th>Total</th><th>Mode</th></tr></thead><tbody id="calSalesTableBody"></tbody></table></div>
+
+                    <h4 style="font-size:14px; margin-top:20px; margin-bottom:8px;">💸 Expenses on <span id="calSelectedExpDateText" style="color:#fbbf24;"></span></h4>
+                    <div class="table-wrap"><table><thead><tr><th>Expense Title</th><th>Category</th><th>Amount</th></tr></thead><tbody id="calExpTableBody"></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- TAB 3: SALES LEDGER -->
+            <section id="salesTab" class="view-section">
+                <div class="glass-panel">
+                    <div class="panel-header" style="flex-wrap:wrap; gap:10px;">
+                        <h3>📊 Complete Sales Ledger</h3>
+                        <input type="text" id="salesSearchInput" onkeyup="applyDateFilter()" placeholder="🔍 Search customer or dish..." style="max-width:240px; padding:8px 12px;">
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Customer</th><th>Items Ordered</th><th>Total</th><th>Mode</th><th>Actions</th></tr></thead><tbody id="salesTableBody"></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- TAB 4: UDHAAR -->
+            <section id="udhaarTab" class="view-section">
+                <div class="glass-panel">
+                    <div class="panel-header"><h3 style="color:#fb7185;">📒 Active Udhaar (Credit) Register</h3></div>
+                    <div class="table-wrap"><table><thead><tr><th>Date & Time</th><th>Customer Name</th><th>Phone</th><th>Items Taken</th><th>Udhaar Amount</th><th>Action</th></tr></thead><tbody id="udhaarTableBody"></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- TAB 5: EXPENSES -->
+            <section id="expenseTab" class="view-section">
+                <div class="glass-panel">
+                    <div class="panel-header"><h3 style="color:#fbbf24;">💸 Daily Business Expense Manager</h3></div>
+                    <div class="form-grid" style="margin-bottom:16px;">
+                        <div class="form-group"><label>Expense Title</label><input type="text" id="expTitle" placeholder="e.g. Chicken, Rice, Gas"></div>
+                        <div class="form-group"><label>Amount (PKR)</label><input type="number" id="expAmount" placeholder="e.g. 5000"></div>
+                        <div class="form-group"><label>Category</label>
+                            <select id="expCategory">
+                                <option value="Raw Materials">Raw Materials & Groceries</option>
+                                <option value="Utilities">Utilities (Gas, Electricity)</option>
+                                <option value="Staff">Staff Wages & Salary</option>
+                                <option value="Maintenance">Shop Rent & Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Date</label><input type="date" id="expDate"></div>
+                        <div class="form-group span-2"><button class="btn btn-gold" style="width:100%; justify-content:center; padding:12px;" onclick="saveExpense()">+ Record Expense Entry</button></div>
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>Date</th><th>Expense Title</th><th>Category</th><th>Amount</th><th>Action</th></tr></thead><tbody id="expenseTableBody"></tbody></table></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let currentFilterRange = 'thisMonth';
+        let orderQuantities = {};
+
+        function setCurrentDateTime() {
+            let now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('entryDateTime').value = now.toISOString().slice(0,16);
+            document.getElementById('expDate').valueAsDate = new Date();
+            document.getElementById('selectedCalendarDate').valueAsDate = new Date();
+        }
+        setCurrentDateTime();
+
+        let defaultSettings = {
+            shopName: "Naseeb Biryani",
+            isLocked: false,
+            expiryDate: "2026-12-31",
+            prices: {
+                "Chicken Biryani (Full)": 350,
+                "Chicken Biryani (Double)": 5

@@ -35,6 +35,11 @@
         .total-banner h3 { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
         .total-banner span { font-size: 24px; font-weight: 800; color: var(--emerald); letter-spacing: -0.5px; }
 
+        /* Calendar / Date Filter Bar */
+        .calendar-bar { display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 14px; }
+        .calendar-bar label { font-size: 11px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; }
+        .calendar-bar input[type="date"] { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none; flex: 1; }
+
         .items-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
         .item-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: left; cursor: pointer; transition: 0.2s; color: #fff; }
         .item-btn:active { transform: scale(0.97); }
@@ -163,9 +168,17 @@
 
         <div class="card">
             <div class="card-title">
-                <span>Recent Transactions</span>
+                <span>Ledger Transactions</span>
                 <span id="txCount" style="color:var(--text-secondary);">0 entries</span>
             </div>
+
+            <!-- Calendar / Date Filter Bar -->
+            <div class="calendar-bar">
+                <label>📅 Select Date:</label>
+                <input type="date" id="filterDate" onchange="renderApp()">
+                <button onclick="resetDateFilter()" style="background:none; border:none; color:var(--cyan); font-size:11px; cursor:pointer; font-weight:700;">Show All</button>
+            </div>
+
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -198,6 +211,15 @@
 
         let transactions = JSON.parse(localStorage.getItem('naseeb_pos_tx')) || [];
         let selectedItem = null;
+
+        // Set default date picker to today
+        window.onload = function() {
+            const todayIso = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = todayIso;
+            checkLicense();
+            initMenu();
+            renderApp();
+        };
 
         function checkLicense() {
             const now = Date.now();
@@ -350,6 +372,7 @@
                 price: selectedItem.price,
                 type: type,
                 customer: customerName,
+                dateStr: now.toISOS String().split('T')[0], // YYYY-MM-DD for filter
                 date: now.toLocaleDateString(),
                 time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
@@ -368,9 +391,21 @@
             renderApp();
         }
 
+        function resetDateFilter() {
+            document.getElementById('filterDate').value = "";
+            renderApp();
+        }
+
         function renderApp() {
+            const selectedDate = document.getElementById('filterDate').value;
+            
+            let filteredTx = transactions;
+            if (selectedDate) {
+                filteredTx = transactions.filter(t => t.dateStr === selectedDate);
+            }
+
             const tbody = document.getElementById('transactionTable');
-            tbody.innerHTML = transactions.map(t => `
+            tbody.innerHTML = filteredTx.map(t => `
                 <tr>
                     <td><strong>${t.name}</strong>${t.customer ? `<br><small style="color:var(--cyan);">👤 ${t.customer}</small>` : ''}<br><small style="color:var(--text-secondary); font-size:9px;">${t.date}</small></td>
                     <td>Rs. ${t.price}</td>
@@ -379,11 +414,11 @@
                 </tr>
             `).join('');
 
-            document.getElementById('txCount').innerText = `${transactions.length} entries`;
+            document.getElementById('txCount').innerText = `${filteredTx.length} entries`;
 
-            const todayStr = new Date().toLocaleDateString();
+            const todayIso = new Date().toISOString().split('T')[0];
             const todayTotal = transactions
-                .filter(t => t.date === todayStr)
+                .filter(t => t.dateStr === todayIso)
                 .reduce((sum, t) => sum + t.price, 0);
 
             document.getElementById('todayTotal').innerText = `Rs. ${todayTotal}`;
@@ -395,10 +430,6 @@
                 saveAndRender();
             }
         }
-
-        checkLicense();
-        initMenu();
-        renderApp();
     </script>
 </body>
 </html>

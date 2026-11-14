@@ -3,433 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Naseeb Biryani - Enterprise POS & SaaS Suite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Smart POS & Master Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #06090f;
-            --bg-card: #0f172a;
+            --bg: #090d16;
+            --card: #131c2e;
+            --input: #1e293b;
             --emerald: #10b981;
-            --emerald-glow: rgba(16, 185, 129, 0.25);
             --rose: #f43f5e;
             --cyan: #06b6d4;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
+            --text: #f8fafc;
+            --muted: #94a3b8;
             --border: rgba(255, 255, 255, 0.08);
-            --radius: 16px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-base); color: var(--text-primary); padding: 14px; min-height: 100vh; }
-        .app-container { max-width: 480px; margin: 0 auto; padding-bottom: 40px; }
+        body { background: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; }
+        .app { max-width: 460px; margin: 0 auto; padding-bottom: 40px; }
 
-        .header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
-        .brand h1 { font-size: 18px; font-weight: 800; color: #fff; }
-        .brand span { font-size: 11px; color: var(--emerald); font-weight: 700; background: rgba(16,185,129,0.12); padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 2px; }
-        
-        .admin-trigger { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; }
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 12px; }
+        .h-info h1 { font-size: 16px; font-weight: 800; color: #fff; }
+        .h-info span { font-size: 10px; color: var(--emerald); background: rgba(16,185,129,0.12); padding: 2px 8px; border-radius: 99px; font-weight: 700; display: inline-block; margin-top: 2px; }
+        .admin-btn { background: var(--input); border: 1px solid var(--border); color: var(--muted); padding: 7px 12px; border-radius: 9px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-        .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px; letter-spacing: 0.6px; display: flex; justify-content: space-between; align-items: center; }
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .stat-box { background: var(--card); border: 1px solid var(--border); padding: 12px 14px; border-radius: 14px; }
+        .stat-box.prime { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.06)); border-color: rgba(16,185,129,0.3); }
+        .stat-box small { display: block; font-size: 9px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
+        .stat-box strong { font-size: 19px; font-weight: 800; color: var(--emerald); }
+        .stat-box.udhaar-card strong { color: var(--rose); }
 
-        .total-banner { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1)); border: 1px solid rgba(16,185,129,0.3); border-radius: var(--radius); padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .total-banner h3 { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
-        .total-banner span { font-size: 24px; font-weight: 800; color: var(--emerald); letter-spacing: -0.5px; }
+        /* Card */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+        .title { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        /* Calendar / Date Filter Bar */
-        .calendar-bar { display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 14px; }
-        .calendar-bar label { font-size: 11px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; }
-        .calendar-bar input[type="date"] { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none; flex: 1; }
+        /* Order Type */
+        .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .type-pill { background: var(--input); border: 1px solid var(--border); color: var(--muted); padding: 8px 4px; border-radius: 9px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; }
+        .type-pill.active { background: rgba(6,182,212,0.18); border-color: var(--cyan); color: #fff; }
 
-        .items-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-        .item-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: left; cursor: pointer; transition: 0.2s; color: #fff; }
-        .item-btn:active { transform: scale(0.97); }
-        .item-btn.selected { border-color: var(--emerald); background: rgba(16,185,129,0.14); box-shadow: 0 0 15px var(--emerald-glow); }
-        .item-name { font-size: 13px; font-weight: 700; display: block; margin-bottom: 4px; }
-        .item-price { font-size: 13px; color: var(--emerald); font-weight: 800; }
+        /* Menu Grid (Halwa UI) */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .menu-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 11px; padding: 12px 10px; text-align: left; cursor: pointer; color: #fff; transition: 0.1s; }
+        .menu-item:active { transform: scale(0.96); }
+        .menu-item.selected { border-color: var(--emerald); background: rgba(16,185,129,0.14); box-shadow: 0 0 10px rgba(16,185,129,0.15); }
+        .menu-item b { display: block; font-size: 12px; margin-bottom: 2px; }
+        .menu-item span { font-size: 12px; font-weight: 800; color: var(--emerald); }
 
-        .summary-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 12px; }
-        .summary-box strong { color: var(--emerald); font-size: 15px; }
+        /* Selection */
+        .selected-box { background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 9px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 12px; }
+        .selected-box strong { color: var(--emerald); font-size: 14px; }
 
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { padding: 14px; border-radius: 12px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; color: #fff; text-align: center; }
-        .btn-cash { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px var(--emerald-glow); }
-        .btn-udhaar { background: linear-gradient(135deg, #f43f5e, #be123c); box-shadow: 0 4px 15px rgba(244,63,94,0.25); }
+        /* Action Buttons */
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .act-btn { border: none; border-radius: 11px; padding: 12px 4px; font-size: 11px; font-weight: 800; color: #fff; cursor: pointer; text-align: center; }
+        .act-btn:active { transform: scale(0.96); }
+        .b-cash { background: linear-gradient(135deg, #10b981, #059669); }
+        .b-online { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+        .b-udhaar { background: linear-gradient(135deg, #f43f5e, #be123c); }
 
-        .table-wrap { overflow-x: auto; margin-top: 10px; max-height: 240px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-        th { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-card); }
-        td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        /* Calendar */
+        .cal-box { display: flex; gap: 6px; align-items: center; background: var(--input); padding: 6px 10px; border-radius: 9px; margin-bottom: 10px; }
+        .cal-box input { background: transparent; border: none; color: #fff; font-size: 11px; font-weight: 600; flex: 1; outline: none; color-scheme: dark; }
+        .cal-box button { background: rgba(255,255,255,0.06); border: none; color: var(--cyan); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; }
 
-        #lockOverlay { display: none; position: fixed; inset: 0; background: rgba(3, 5, 8, 0.96); backdrop-filter: blur(20px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; text-align: center; }
-        .lock-box { background: var(--bg-card); border: 2px solid rgba(244,63,94,0.4); border-radius: 20px; padding: 30px 20px; max-width: 400px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        /* Table */
+        .table-wrap { max-height: 250px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { text-align: left; font-size: 9px; color: var(--muted); text-transform: uppercase; padding: 6px 4px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--card); }
+        td { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: top; }
+        .tag { display: inline-block; padding: 2px 5px; border-radius: 4px; font-size: 9px; font-weight: 800; }
+        .t-cash { background: rgba(16,185,129,0.15); color: var(--emerald); }
+        .t-online { background: rgba(6,182,212,0.15); color: var(--cyan); }
+        .t-udhaar { background: rgba(244,63,94,0.15); color: var(--rose); }
 
-        #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px); z-index: 3000; justify-content: center; align-items: center; padding: 16px; overflow-y: auto; }
-        .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; max-width: 440px; width: 100%; max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 12px; outline: none; }
-        
-        .stat-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center; }
-        .stat-card span { font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 700; }
-        .stat-card strong { font-size: 15px; color: var(--emerald); font-weight: 800; }
+        /* Paywall */
+        #paywall { display: none; position: fixed; inset: 0; background: rgba(5, 8, 13, 0.98); backdrop-filter: blur(14px); z-index: 9999; justify-content: center; align-items: center; padding: 16px; text-align: center; }
+        .pay-card { background: var(--card); border: 2px solid var(--rose); border-radius: 18px; padding: 24px 18px; max-width: 360px; width: 100%; }
 
-        .dish-row-admin { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
-        .dish-row-admin input { padding: 8px; font-size: 11px; }
+        /* Admin Modal */
+        #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 5000; justify-content: center; align-items: flex-start; padding: 10px; overflow-y: auto; }
+        .admin-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; max-width: 440px; width: 100%; margin: 10px auto; }
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+        .a-box { background: var(--input); padding: 10px 4px; border-radius: 9px; text-align: center; }
+        .a-box span { display: block; font-size: 8px; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .a-box strong { font-size: 12px; color: var(--emerald); font-weight: 800; }
+        .form-row { margin-bottom: 10px; }
+        .form-row label { display: block; font-size: 9px; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+        .form-row input, .form-row select { width: 100%; background: var(--input); border: 1px solid var(--border); color: #fff; padding: 9px; border-radius: 8px; font-size: 11px; outline: none; }
+        .dish-line { display: flex; gap: 6px; margin-bottom: 6px; }
+        .dish-line input { background: var(--input); border: 1px solid var(--border); color: #fff; padding: 7px; border-radius: 7px; font-size: 11px; outline: none; }
     </style>
 </head>
 <body>
-    <div id="lockOverlay">
-        <div class="lock-box">
-            <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
-            <h2 style="color: #fff; font-size: 20px; font-weight: 800; margin-bottom: 8px;">Subscription Expired</h2>
-            <p id="lockReason" style="color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Aapka trial period khatam ho gaya hai. Mazeed istamal karne ke liye developer se rabta karein.</p>
-            <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 12px; border-radius: 12px; color: var(--emerald); font-weight: 700; font-size: 14px;">
-                📞 Contact: +92 323 1224080
+
+    <!-- 48-HOUR TRIAL & EXPIRY LOCK SCREEN -->
+    <div id="paywall">
+        <div class="pay-card">
+            <div style="font-size: 36px; margin-bottom: 10px;">⏳</div>
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Trial Period Khatam</h2>
+            <p id="lockMsg" style="font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 16px;">
+                Aapka 48 ghante ka free trial mukammal ho gaya hai. Mazeed istamal karne ke liye mahana plan activate karwayein.
+            </p>
+            <div style="background: rgba(16,185,129,0.12); border: 1px solid var(--emerald); padding: 10px; border-radius: 10px; color: var(--emerald); font-weight: 800; font-size: 13px; margin-bottom: 12px;">
+                📞 Developer: +92 323 1224080
             </div>
+            <button onclick="openAdmin()" style="background:none; border:none; color:var(--muted); font-size:10px; text-decoration:underline; cursor:pointer;">Admin Unlock</button>
         </div>
     </div>
 
+    <!-- MASTER ADMIN PANEL (Password: 123456789) -->
     <div id="adminModal">
-        <div class="admin-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                <h3 style="font-size: 15px; font-weight: 800; color:#fff;">⚙️ SaaS Admin & Analytics</h3>
-                <button onclick="closeAdmin()" style="background:none; border:none; color:var(--text-secondary); font-size:16px; cursor:pointer;">✕</button>
-            </div>
-            
-            <div class="stat-box">
-                <div class="stat-card">
-                    <span>Mahina (Month)</span>
-                    <strong id="adminMonthSales">Rs. 0</strong>
-                </div>
-                <div class="stat-card">
-                    <span>Saal (Year)</span>
-                    <strong id="adminYearSales">Rs. 0</strong>
-                </div>
+        <div class="admin-wrap">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="font-size: 14px; font-weight: 800;">⚙️ Master Admin Control</h3>
+                <button onclick="closeAdmin()" style="background:none; border:none; color:#fff; font-size:16px; cursor:pointer;">✕</button>
             </div>
 
-            <div class="form-group">
-                <label>Trial Days Allowed</label>
-                <input type="number" id="adminDays" min="1" max="365">
+            <!-- Total Sales & Udhaar Dashboard for You -->
+            <div class="admin-stats-grid">
+                <div class="a-box"><span>Aaj Ki Sale</span><strong id="admToday">Rs. 0</strong></div>
+                <div class="a-box"><span>Mahina Sale</span><strong id="admMonth">Rs. 0</strong></div>
+                <div class="a-box"><span>Kul Udhaar</span><strong id="admUdhaar" style="color:var(--rose);">Rs. 0</strong></div>
             </div>
 
-            <div class="form-group">
-                <label>Manual Status Control</label>
-                <select id="adminStatus">
-                    <option value="active">Active (Running)</option>
-                    <option value="locked">Force Lock (Expired/Unpaid)</option>
+            <div class="form-row">
+                <label>Dukaan Ka Naam (Shop Name)</label>
+                <input type="text" id="admShop">
+            </div>
+
+            <div class="form-row">
+                <label>Trial Days (Default: 2 Days)</label>
+                <input type="number" id="admTrialDays" min="1" max="365">
+            </div>
+
+            <div class="form-row">
+                <label>Lock / Unlock Control (Remote Band/Chalu)</label>
+                <select id="admStatus">
+                    <option value="active">🟢 Active (Chalu Hai)</option>
+                    <option value="locked">🔴 Force Lock (Band Karo)</option>
                 </select>
             </div>
 
-            <hr style="border:0; border-top:1px solid var(--border); margin: 12px 0;">
+            <div class="title" style="margin-top:12px;">
+                <span>Rate List & Dishes Management</span>
+                <button onclick="addDishRow()" style="background:var(--emerald); border:none; color:#fff; padding:3px 6px; border-radius:5px; font-size:9px; font-weight:700; cursor:pointer;">+ Add</button>
+            </div>
+            <div id="admDishBox" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;"></div>
 
-            <label style="font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; display:block;">Manage Menu Items & Prices</label>
-            <div id="adminMenuContainer" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;"></div>
-            <button class="btn" style="background:rgba(255,255,255,0.06); width:100%; padding:8px; font-size:11px; margin-bottom:14px;" onclick="addMenuRow('', '')">+ Add New Dish</button>
-
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-cash" style="flex:1; padding:10px; font-size:12px;" onclick="saveAdminSettings()">Save All Changes</button>
-                <button class="btn" style="flex:1; padding:10px; font-size:12px; background:rgba(255,255,255,0.05);" onclick="closeAdmin()">Cancel</button>
+            <div style="display:flex; gap:6px;">
+                <button onclick="saveAdmin()" class="act-btn b-cash" style="flex:1;">Save Settings</button>
+                <button onclick="exportBackup()" class="act-btn b-online" style="flex:1;">📥 Backup JSON</button>
             </div>
         </div>
     </div>
 
-    <div class="app-container">
+    <!-- MAIN POS SCREEN -->
+    <div class="app">
         <div class="header">
-            <div class="brand">
-                <h1>Naseeb Biryani</h1>
-                <span>Digital POS Ledger</span>
+            <div class="h-info">
+                <h1 id="shopTitle">Naseeb Biryani</h1>
+                <span>Fast Digital Ledger</span>
             </div>
-            <button class="admin-trigger" onclick="promptAdmin()">⚙️ Admin</button>
+            <button class="admin-btn" onclick="openAdmin()">⚙️ Admin</button>
         </div>
 
-        <div class="total-banner">
-            <div>
-                <h3>Aaj ki Total Sales</h3>
-                <span id="todayTotal">Rs. 0</span>
+        <div class="stats-row">
+            <div class="stat-box prime">
+                <small id="saleLbl">Aaj Ki Total Sale</small>
+                <strong id="dispSales">Rs. 0</strong>
             </div>
-            <button onclick="confirmReset()" style="background:none; border:none; color:var(--rose); font-size:11px; cursor:pointer; font-weight:700;">Reset Data</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Menu Selections (Tap to Select)</div>
-            <div class="items-grid" id="menuGrid"></div>
-
-            <div class="summary-box">
-                <span>Selected: <strong id="selItemName">Kuch nahi</strong></span>
-                <span>Total: <strong id="selItemTotal">Rs. 0</strong></span>
-            </div>
-
-            <div class="action-btns">
-                <button class="btn btn-cash" onclick="recordSale('Cash')">Cash Aaya</button>
-                <button class="btn btn-udhaar" onclick="recordSale('Udhaar')">Udhaar Likho</button>
+            <div class="stat-box udhaar-card">
+                <small>Kul Udhaar Baqi</small>
+                <strong id="dispUdhaar">Rs. 0</strong>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">
-                <span>Ledger Transactions</span>
-                <span id="txCount" style="color:var(--text-secondary);">0 entries</span>
+            <div class="title">1. Order Kahan Ka Hai?</div>
+            <div class="type-grid" id="typeGroup">
+                <div class="type-pill active" onclick="setType('Dukaan (Walk-in)', this)">🍽️ Dukaan</div>
+                <div class="type-pill" onclick="setType('Parcel', this)">🛍️ Parcel</div>
+                <div class="type-pill" onclick="setType('Delivery', this)">🛵 Delivery</div>
             </div>
 
-            <!-- Calendar / Date Filter Bar -->
-            <div class="calendar-bar">
-                <label>📅 Select Date:</label>
-                <input type="date" id="filterDate" onchange="renderApp()">
-                <button onclick="resetDateFilter()" style="background:none; border:none; color:var(--cyan); font-size:11px; cursor:pointer; font-weight:700;">Show All</button>
+            <div class="title">2. Biryani / Menu Button Dabayein (Halwa UI)</div>
+            <div class="menu-grid" id="menuBox"></div>
+
+            <div class="selected-box">
+                <span>Item: <strong id="selName">Kuch nahi</strong></span>
+                <span>Bill: <strong id="selPrice">Rs. 0</strong></span>
+            </div>
+
+            <div class="title">3. Payment Type Chunein</div>
+            <div class="action-grid">
+                <button class="act-btn b-cash" onclick="recordSale('Cash')">💵 Cash</button>
+                <button class="act-btn b-online" onclick="recordSale('Online')">📱 Online</button>
+                <button class="act-btn b-udhaar" onclick="recordSale('Udhaar')">📒 Udhaar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="title" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Rozana Khata (Ledger)</span>
+                <span id="counter" style="color:var(--cyan);">0 entries</span>
+            </div>
+
+            <div class="cal-box">
+                <span style="font-size:13px;">📅</span>
+                <input type="date" id="dateFilter" onchange="renderApp()">
+                <button onclick="clearDateFilter()">Sab Dikhao</button>
             </div>
 
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Item & Customer</th>
-                            <th>Amount</th>
+                            <th>Detail / Naam</th>
+                            <th>Bill</th>
                             <th>Type</th>
-                            <th>Time</th>
+                            <th>Waqt</th>
                         </tr>
                     </thead>
-                    <tbody id="transactionTable"></tbody>
+                    <tbody id="ledgerBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        let license = JSON.parse(localStorage.getItem('pos_license')) || {
-            installDate: Date.now(),
+        const initialMenu = [
+            { id: 1, name: "Chicken Biryani (Plate)", price: 250 },
+            { id: 2, name: "Chicken Biryani (Full/Double)", price: 450 },
+            { id: 3, name: "Aloo Wali Biryani", price: 180 },
+            { id: 4, name: "Saadi Biryani (Pulao)", price: 150 },
+            { id: 5, name: "Special Raita & Salad", price: 50 },
+            { id: 6, name: "Cold Drink (Sting/Pepsi)", price: 90 }
+        ];
+
+        let license = JSON.parse(localStorage.getItem('pos_license_v4')) || {
+            installTime: Date.now(),
             trialDays: 2,
             status: 'active'
         };
 
-        let menuItems = JSON.parse(localStorage.getItem('pos_menu_items')) || [
-            { id: 1, name: "Chicken Biryani (Plate)", price: 280 },
-            { id: 2, name: "Chicken Biryani (Full)", price: 500 },
-            { id: 3, name: "Chicken Biryani (Special)", price: 650 },
-            { id: 4, name: "Cold Drink / Raita", price: 70 }
-        ];
-
-        let transactions = JSON.parse(localStorage.getItem('naseeb_pos_tx')) || [];
-        let selectedItem = null;
-
-        // Set default date picker to today
-        window.onload = function() {
-            const todayIso = new Date().toISOString().split('T')[0];
-            document.getElementById('filterDate').value = todayIso;
-            checkLicense();
-            initMenu();
-            renderApp();
+        let config = JSON.parse(localStorage.getItem('pos_config_v4')) || {
+            shopName: "Naseeb Biryani"
         };
 
-        function checkLicense() {
+        let menu = JSON.parse(localStorage.getItem('pos_menu_v4')) || initialMenu;
+        let ledger = JSON.parse(localStorage.getItem('pos_ledger_v4')) || [];
+
+        let activeDish = null;
+        let activeType = "Dukaan (Walk-in)";
+
+        function init() {
+            const todayIso = new Date().toISOString().split('T')[0];
+            document.getElementById('dateFilter').value = todayIso;
+            checkTrialExpiry();
+            document.getElementById('shopTitle').innerText = config.shopName;
+            renderMenu();
+            renderApp();
+        }
+
+        function checkTrialExpiry() {
             const now = Date.now();
-            const daysPassed = (now - license.installDate) / (1000 * 60 * 60 * 24);
-            const lockOverlay = document.getElementById('lockOverlay');
-            
-            if (license.status === 'locked' || daysPassed > license.trialDays) {
-                lockOverlay.style.display = 'flex';
-                if(daysPassed > license.trialDays && license.status === 'active') {
-                    document.getElementById('lockReason').innerText = `Aapka ${license.trialDays} din ka trial period khatam ho chuka hai.`;
+            const elapsedDays = (now - license.installTime) / (1000 * 60 * 60 * 24);
+            const paywall = document.getElementById('paywall');
+
+            if (license.status === 'locked' || elapsedDays > license.trialDays) {
+                paywall.style.display = 'flex';
+                if (elapsedDays > license.trialDays && license.status === 'active') {
+                    document.getElementById('lockMsg').innerText = `Aapka ${license.trialDays} din ka free trial poora ho gaya hai. Mahana plan activate karwayein.`;
                 }
             } else {
-                lockOverlay.style.display = 'none';
+                paywall.style.display = 'none';
             }
         }
 
-        function promptAdmin() {
-            const pass = prompt("Enter Developer Admin Password:");
-            if (pass === "SURAKA123") {
-                document.getElementById('adminDays').value = license.trialDays;
-                document.getElementById('adminStatus').value = license.status;
-
-                const now = new Date();
-                const currentMonth = now.getMonth();
-                const currentYear = now.getFullYear();
-
-                const monthTotal = transactions
-                    .filter(t => {
-                        const d = new Date(t.timestamp || t.id);
-                        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-                    })
-                    .reduce((sum, t) => sum + t.price, 0);
-
-                const yearTotal = transactions
-                    .filter(t => {
-                        const d = new Date(t.timestamp || t.id);
-                        return d.getFullYear() === currentYear;
-                    })
-                    .reduce((sum, t) => sum + t.price, 0);
-
-                document.getElementById('adminMonthSales').innerText = `Rs. ${monthTotal}`;
-                document.getElementById('adminYearSales').innerText = `Rs. ${yearTotal}`;
-
-                renderAdminMenuRows();
-                document.getElementById('adminModal').style.display = 'flex';
-            } else if(pass !== null) {
-                alert("Ghalat password!");
-            }
+        function setType(type, el) {
+            activeType = type;
+            document.querySelectorAll('#typeGroup .type-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        function renderAdminMenuRows() {
-            const container = document.getElementById('adminMenuContainer');
-            container.innerHTML = menuItems.map((item, index) => `
-                <div class="dish-row-admin">
-                    <input type="text" value="${item.name}" id="adminDishName_${index}" placeholder="Dish Name" style="flex:2;">
-                    <input type="number" value="${item.price}" id="adminDishPrice_${index}" placeholder="Price" style="flex:1;">
-                    <button onclick="removeMenuRow(${index})" style="background:var(--rose); border:none; color:#fff; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:11px;">✕</button>
+        function renderMenu() {
+            const box = document.getElementById('menuBox');
+            box.innerHTML = menu.map(item => `
+                <div class="menu-item ${activeDish && activeDish.id === item.id ? 'selected' : ''}" onclick="pickItem(${item.id})">
+                    <b>${item.name}</b>
+                    <span>Rs. ${item.price}</span>
                 </div>
             `).join('');
         }
 
-        function addMenuRow(name, price) {
-            menuItems.push({ id: Date.now(), name: name, price: price });
-            renderAdminMenuRows();
+        function pickItem(id) {
+            activeDish = menu.find(d => d.id === id);
+            document.getElementById('selName').innerText = activeDish.name;
+            document.getElementById('selPrice').innerText = 'Rs. ' + activeDish.price;
+            renderMenu();
         }
 
-        function removeMenuRow(index) {
-            menuItems.splice(index, 1);
-            renderAdminMenuRows();
+        function recordSale(payType) {
+            if (!activeDish) {
+                alert("Pehle upar se koi dish select karein!");
+                return;
+            }
+
+            let customerName = "";
+            if (payType === "Udhaar") {
+                customerName = prompt("Udhaar lene wale customer ka naam likhein:");
+                if (customerName === null) return;
+                if (customerName.trim() === "") customerName = "Naam Nahi Likha";
+            }
+
+            const now = new Date();
+            const entry = {
+                id: Date.now(),
+                dishName: activeDish.name,
+                price: Number(activeDish.price),
+                orderType: activeType,
+                paymentType: payType,
+                customer: customerName.trim(),
+                dateStr: now.toISOString().split('T')[0],
+                timeStr: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            ledger.unshift(entry);
+            localStorage.setItem('pos_ledger_v4', JSON.stringify(ledger));
+
+            activeDish = null;
+            document.getElementById('selName').innerText = "Kuch nahi";
+            document.getElementById('selPrice').innerText = "Rs. 0";
+            renderMenu();
+            renderApp();
+        }
+
+        function clearDateFilter() {
+            document.getElementById('dateFilter').value = "";
+            renderApp();
+        }
+
+        function renderApp() {
+            const selectedDate = document.getElementById('dateFilter').value;
+            const filtered = selectedDate ? ledger.filter(r => r.dateStr === selectedDate) : ledger;
+
+            const totalSale = filtered.reduce((sum, r) => sum + r.price, 0);
+            const totalUdhaar = ledger.filter(r => r.paymentType === 'Udhaar').reduce((sum, r) => sum + r.price, 0);
+
+            document.getElementById('saleLbl').innerText = selectedDate ? `Sale (${selectedDate})` : "Aaj Ki Total Sale";
+            document.getElementById('dispSales').innerText = 'Rs. ' + totalSale;
+            document.getElementById('dispUdhaar').innerText = 'Rs. ' + totalUdhaar;
+            document.getElementById('counter').innerText = filtered.length + ' entries';
+
+            const tbody = document.getElementById('ledgerBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--muted); padding:16px;">Is din ka koi hisab nahi hai</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => {
+                let badgeCls = r.paymentType === 'Cash' ? 't-cash' : (r.paymentType === 'Online' ? 't-online' : 't-udhaar');
+                return `
+                    <tr>
+                        <td>
+                            <b>${r.dishName}</b>
+                            <div style="font-size:9px; color:var(--muted);">${r.orderType} • ${r.dateStr}</div>
+                            ${r.customer ? `<div style="font-size:10px; color:var(--rose); font-weight:700;">👤 ${r.customer}</div>` : ''}
+                        </td>
+                        <td style="font-weight:700;">Rs. ${r.price}</td>
+                        <td><span class="tag ${badgeCls}">${r.paymentType}</span></td>
+                        <td style="color:var(--muted); font-size:10px;">${r.timeStr}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // --- MASTER ADMIN PANEL (Password: 123456789) ---
+        function openAdmin() {
+            const pwd = prompt("Master Admin Password Darj Karein:");
+            if (pwd !== "123456789") {
+                if (pwd !== null) alert("Ghalat Password!");
+                return;
+            }
+
+            // Calculate live totals for Admin
+            const todayIso = new Date().toISOString().split('T')[0];
+            const monthPrefix = todayIso.slice(0, 7);
+
+            const todaySum = ledger.filter(r => r.dateStr === todayIso).reduce((s, r) => s + r.price, 0);
+            const monthSum = ledger.filter(r => r.dateStr.startsWith(monthPrefix)).reduce((s, r) => s + r.price, 0);
+            const udhaarSum = ledger.filter(r => r.paymentType === 'Udhaar').reduce((s, r) => s + r.price, 0);
+
+            document.getElementById('admToday').innerText = 'Rs. ' + todaySum;
+            document.getElementById('admMonth').innerText = 'Rs. ' + monthSum;
+            document.getElementById('admUdhaar').innerText = 'Rs. ' + udhaarSum;
+
+            document.getElementById('admShop').value = config.shopName;
+            document.getElementById('admTrialDays').value = license.trialDays;
+            document.getElementById('admStatus').value = license.status;
+
+            renderAdminDishes();
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function renderAdminDishes() {
+            const box = document.getElementById('admDishBox');
+            box.innerHTML = menu.map((d, i) => `
+                <div class="dish-line">
+                    <input type="text" id="admName_${i}" value="${d.name}" style="flex:2;" placeholder="Dish Naam">
+                    <input type="number" id="admPrice_${i}" value="${d.price}" style="flex:1;" placeholder="Price">
+                    <button onclick="removeDish(${i})" style="background:var(--rose); border:none; color:#fff; padding:0 8px; border-radius:6px; font-weight:800; cursor:pointer;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function addDishRow() {
+            menu.push({ id: Date.now(), name: "", price: 0 });
+            renderAdminDishes();
+        }
+
+        function removeDish(i) {
+            menu.splice(i, 1);
+            renderAdminDishes();
+        }
+
+        function saveAdmin() {
+            const newName = document.getElementById('admShop').value.trim();
+            if (newName) config.shopName = newName;
+
+            const days = parseInt(document.getElementById('admTrialDays').value);
+            if (!isNaN(days) && days > 0) license.trialDays = days;
+
+            license.status = document.getElementById('admStatus').value;
+
+            const updatedMenu = [];
+            for (let i = 0; i < menu.length; i++) {
+                const n = document.getElementById(`admName_${i}`).value.trim();
+                const p = Number(document.getElementById(`admPrice_${i}`).value);
+                if (n && p > 0) {
+                    updatedMenu.push({ id: Date.now() + i, name: n, price: p });
+                }
+            }
+
+            if (updatedMenu.length === 0) {
+                alert("Kam az kam ek dish hona zaroori hai!");
+                return;
+            }
+
+            menu = updatedMenu;
+            localStorage.setItem('pos_config_v4', JSON.stringify(config));
+            localStorage.setItem('pos_license_v4', JSON.stringify(license));
+            localStorage.setItem('pos_menu_v4', JSON.stringify(menu));
+
+            document.getElementById('shopTitle').innerText = config.shopName;
+            checkTrialExpiry();
+            renderMenu();
+            renderApp();
+            closeAdmin();
+            alert("Master Settings Kamyabi se Save ho gayi hain!");
         }
 
         function closeAdmin() {
             document.getElementById('adminModal').style.display = 'none';
         }
 
-        function saveAdminSettings() {
-            const newDays = parseInt(document.getElementById('adminDays').value);
-            const newStatus = document.getElementById('adminStatus').value;
-
-            if(isNaN(newDays) || newDays < 1) {
-                alert("Kam az kam 1 din hona chahiye!");
-                return;
-            }
-
-            let updatedMenu = [];
-            for(let i = 0; i < menuItems.length; i++) {
-                const nameInput = document.getElementById(`adminDishName_${i}`);
-                const priceInput = document.getElementById(`adminDishPrice_${i}`);
-                if(nameInput && priceInput) {
-                    const name = nameInput.value.trim();
-                    const price = parseFloat(priceInput.value);
-                    if(name && !isNaN(price)) {
-                        updatedMenu.push({ id: Date.now() + i, name: name, price: price });
-                    }
-                }
-            }
-
-            if(updatedMenu.length === 0) {
-                alert("Kam az kam ek dish honi zaroori hai!");
-                return;
-            }
-
-            menuItems = updatedMenu;
-            license.trialDays = newDays;
-            license.status = newStatus;
-
-            localStorage.setItem('pos_license', JSON.stringify(license));
-            localStorage.setItem('pos_menu_items', JSON.stringify(menuItems));
-
-            closeAdmin();
-            checkLicense();
-            initMenu();
-            alert("Admin settings & menu successfully update ho gaye!");
+        function exportBackup() {
+            const backupData = JSON.stringify({ config, license, menu, ledger }, null, 2);
+            const blob = new Blob([backupData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${config.shopName.replace(/\s+/g, '_')}_MasterBackup.json`;
+            a.click();
         }
 
-        function initMenu() {
-            const grid = document.getElementById('menuGrid');
-            grid.innerHTML = menuItems.map(item => `
-                <div class="item-btn ${selectedItem?.id === item.id ? 'selected' : ''}" onclick="selectItem(${item.id})">
-                    <span class="item-name">${item.name}</span>
-                    <span class="item-price">Rs. ${item.price}</span>
-                </div>
-            `).join('');
-        }
-
-        function selectItem(id) {
-            selectedItem = menuItems.find(i => i.id === id);
-            document.getElementById('selItemName').innerText = selectedItem.name;
-            document.getElementById('selItemTotal').innerText = `Rs. ${selectedItem.price}`;
-            initMenu();
-        }
-
-        function recordSale(type) {
-            if (!selectedItem) {
-                alert('Pehle menu se item select karo bhai!');
-                return;
-            }
-
-            let customerName = "";
-            if (type === 'Udhaar') {
-                customerName = prompt("Udhaar lene wale ka naam likhein:", "Guest");
-                if (!customerName) customerName = "Unknown";
-            }
-
-            const now = new Date();
-            const newTx = {
-                id: Date.now(),
-                timestamp: now.getTime(),
-                name: selectedItem.name,
-                price: selectedItem.price,
-                type: type,
-                customer: customerName,
-                dateStr: now.toISOS String().split('T')[0], // YYYY-MM-DD for filter
-                date: now.toLocaleDateString(),
-                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-
-            transactions.unshift(newTx);
-            saveAndRender();
-            
-            selectedItem = null;
-            document.getElementById('selItemName').innerText = "Kuch nahi";
-            document.getElementById('selItemTotal').innerText = "Rs. 0";
-            initMenu();
-        }
-
-        function saveAndRender() {
-            localStorage.setItem('naseeb_pos_tx', JSON.stringify(transactions));
-            renderApp();
-        }
-
-        function resetDateFilter() {
-            document.getElementById('filterDate').value = "";
-            renderApp();
-        }
-
-        function renderApp() {
-            const selectedDate = document.getElementById('filterDate').value;
-            
-            let filteredTx = transactions;
-            if (selectedDate) {
-                filteredTx = transactions.filter(t => t.dateStr === selectedDate);
-            }
-
-            const tbody = document.getElementById('transactionTable');
-            tbody.innerHTML = filteredTx.map(t => `
-                <tr>
-                    <td><strong>${t.name}</strong>${t.customer ? `<br><small style="color:var(--cyan);">👤 ${t.customer}</small>` : ''}<br><small style="color:var(--text-secondary); font-size:9px;">${t.date}</small></td>
-                    <td>Rs. ${t.price}</td>
-                    <td><span style="color:${t.type === 'Cash' ? 'var(--emerald)' : 'var(--rose)'}; font-weight:750;">${t.type}</span></td>
-                    <td>${t.time}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('txCount').innerText = `${filteredTx.length} entries`;
-
-            const todayIso = new Date().toISOString().split('T')[0];
-            const todayTotal = transactions
-                .filter(t => t.dateStr === todayIso)
-                .reduce((sum, t) => sum + t.price, 0);
-
-            document.getElementById('todayTotal').innerText = `Rs. ${todayTotal}`;
-        }
-
-        function confirmReset() {
-            if(confirm("Kya aap saari sales clear karna chahte hain?")) {
-                transactions = [];
-                saveAndRender();
-            }
-        }
+        init();
     </script>
 </body>
 </html>

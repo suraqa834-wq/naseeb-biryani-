@@ -25,6 +25,7 @@
         .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 12px; }
         .h-info h1 { font-size: 16px; font-weight: 800; color: #fff; }
         .h-info span { font-size: 10px; color: var(--emerald); background: rgba(16,185,129,0.12); padding: 2px 8px; border-radius: 99px; font-weight: 700; display: inline-block; margin-top: 2px; }
+        .timer-badge { font-size: 10px; color: var(--cyan); background: rgba(6,182,212,0.12); padding: 2px 8px; border-radius: 99px; font-weight: 800; display: inline-block; margin-left: 4px; }
         .admin-btn { background: var(--input); border: 1px solid var(--border); color: var(--muted); padding: 7px 12px; border-radius: 9px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
         /* Stats */
@@ -44,7 +45,7 @@
         .type-pill { background: var(--input); border: 1px solid var(--border); color: var(--muted); padding: 8px 4px; border-radius: 9px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; }
         .type-pill.active { background: rgba(6,182,212,0.18); border-color: var(--cyan); color: #fff; }
 
-        /* Menu Grid (Halwa UI) */
+        /* Menu Grid */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
         .menu-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 11px; padding: 12px 10px; text-align: left; cursor: pointer; color: #fff; transition: 0.1s; }
         .menu-item:active { transform: scale(0.96); }
@@ -52,9 +53,12 @@
         .menu-item b { display: block; font-size: 12px; margin-bottom: 2px; }
         .menu-item span { font-size: 12px; font-weight: 800; color: var(--emerald); }
 
-        /* Selection */
+        /* Selection & Minus/Clear Controls */
         .selected-box { background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 9px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 12px; }
         .selected-box strong { color: var(--emerald); font-size: 14px; }
+        .qty-controls { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; }
+        .q-btn { background: var(--input); border: 1px solid var(--border); color: #fff; width: 24px; height: 24px; border-radius: 6px; font-weight: 800; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .q-btn.del { background: rgba(244,63,94,0.2); border-color: var(--rose); color: var(--rose); }
 
         /* Action Buttons */
         .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -73,15 +77,23 @@
         .table-wrap { max-height: 250px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
         th { text-align: left; font-size: 9px; color: var(--muted); text-transform: uppercase; padding: 6px 4px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--card); }
-        td { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: top; }
+        td { padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
         .tag { display: inline-block; padding: 2px 5px; border-radius: 4px; font-size: 9px; font-weight: 800; }
         .t-cash { background: rgba(16,185,129,0.15); color: var(--emerald); }
         .t-online { background: rgba(6,182,212,0.15); color: var(--cyan); }
         .t-udhaar { background: rgba(244,63,94,0.15); color: var(--rose); }
+        .del-row-btn { background: rgba(244,63,94,0.15); border: 1px solid rgba(244,63,94,0.3); color: var(--rose); padding: 3px 6px; border-radius: 5px; font-size: 10px; font-weight: 800; cursor: pointer; }
 
-        /* Paywall */
+        /* Trial Start Screen */
+        #trialModal { display: none; position: fixed; inset: 0; background: rgba(5, 8, 13, 0.98); backdrop-filter: blur(14px); z-index: 9999; justify-content: center; align-items: center; padding: 16px; text-align: center; }
+        .trial-card { background: var(--card); border: 2px solid var(--emerald); border-radius: 18px; padding: 26px 20px; max-width: 360px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+
+        /* Subscription Lock Screen */
         #paywall { display: none; position: fixed; inset: 0; background: rgba(5, 8, 13, 0.98); backdrop-filter: blur(14px); z-index: 9999; justify-content: center; align-items: center; padding: 16px; text-align: center; }
         .pay-card { background: var(--card); border: 2px solid var(--rose); border-radius: 18px; padding: 24px 18px; max-width: 360px; width: 100%; }
+        .sub-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: left; }
+        .sub-box div { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+        .sub-box div:last-child { margin-bottom: 0; }
 
         /* Admin Modal */
         #adminModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 5000; justify-content: center; align-items: flex-start; padding: 10px; overflow-y: auto; }
@@ -99,17 +111,41 @@
 </head>
 <body>
 
-    <!-- 48-HOUR TRIAL & EXPIRY LOCK SCREEN -->
+    <!-- 24-HOUR ONE-CLICK TRIAL START SCREEN -->
+    <div id="trialModal">
+        <div class="trial-card">
+            <div style="font-size: 38px; margin-bottom: 10px;">🚀</div>
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 6px; color: #fff;">24 Ghante Ka Free Trial</h2>
+            <p style="font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 18px;">
+                Apni dukaan ka digital hisab-kitab shuru karne ke liye neeche button dabayein. Aapka 24 ghante ka free trial abhi se start ho jayega.
+            </p>
+            <button onclick="start24HourTrial()" class="act-btn b-cash" style="width:100%; padding: 14px; font-size: 13px; border-radius: 12px; box-shadow: 0 8px 20px rgba(16,185,129,0.25);">
+                ⚡ Start 24-Hour Free Trial
+            </button>
+            <div style="margin-top: 12px;">
+                <button onclick="openAdmin()" style="background:none; border:none; color:var(--muted); font-size:10px; text-decoration:underline; cursor:pointer;">Admin Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBSCRIPTION & EXPIRY LOCK SCREEN -->
     <div id="paywall">
         <div class="pay-card">
-            <div style="font-size: 36px; margin-bottom: 10px;">⏳</div>
-            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Trial Period Khatam</h2>
-            <p id="lockMsg" style="font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 16px;">
-                Aapka 48 ghante ka free trial mukammal ho gaya hai. Mazeed istamal karne ke liye mahana plan activate karwayein.
+            <div style="font-size: 36px; margin-bottom: 8px;">🔒</div>
+            <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 4px; color: #fff;">Trial Khatam / Plan Band</h2>
+            <p id="lockMsg" style="font-size: 11px; color: var(--muted); line-height: 1.4; margin-bottom: 12px;">
+                Aapka 24 ghante ka free trial mukammal ho gaya hai. Mazeed istamal ke liye subscription plan hasil karein.
             </p>
-            <div style="background: rgba(16,185,129,0.12); border: 1px solid var(--emerald); padding: 10px; border-radius: 10px; color: var(--emerald); font-weight: 800; font-size: 13px; margin-bottom: 12px;">
-                📞 Developer: +92 323 1224080
+
+            <div class="sub-box">
+                <div><span>📅 Monthly Plan:</span><strong style="color:var(--emerald);">Rs. 1,500 / month</strong></div>
+                <div><span>👑 Yearly VIP Plan:</span><strong style="color:var(--cyan);">Rs. 12,000 / year</strong></div>
             </div>
+
+            <a href="https://wa.me/923231224080?text=Assalam-o-Alaikum!%20Mera%20POS%20trial%20khatam%20ho%20gaya%20hai,%20mujhe%20subscription%20activate%20karwani%20hai." target="_blank" style="display:block; text-decoration:none; background: linear-gradient(135deg, #10b981, #059669); padding: 12px; border-radius: 11px; color: #fff; font-weight: 800; font-size: 12px; margin-bottom: 10px;">
+                💬 Subscribe on WhatsApp (+92 323 1224080)
+            </a>
+
             <button onclick="openAdmin()" style="background:none; border:none; color:var(--muted); font-size:10px; text-decoration:underline; cursor:pointer;">Admin Unlock</button>
         </div>
     </div>
@@ -121,38 +157,32 @@
                 <h3 style="font-size: 14px; font-weight: 800;">⚙️ Master Admin Control</h3>
                 <button onclick="closeAdmin()" style="background:none; border:none; color:#fff; font-size:16px; cursor:pointer;">✕</button>
             </div>
-
-            <!-- Total Sales & Udhaar Dashboard for You -->
             <div class="admin-stats-grid">
                 <div class="a-box"><span>Aaj Ki Sale</span><strong id="admToday">Rs. 0</strong></div>
                 <div class="a-box"><span>Mahina Sale</span><strong id="admMonth">Rs. 0</strong></div>
                 <div class="a-box"><span>Kul Udhaar</span><strong id="admUdhaar" style="color:var(--rose);">Rs. 0</strong></div>
             </div>
-
             <div class="form-row">
                 <label>Dukaan Ka Naam (Shop Name)</label>
                 <input type="text" id="admShop">
             </div>
-
             <div class="form-row">
-                <label>Trial Days (Default: 2 Days)</label>
-                <input type="number" id="admTrialDays" min="1" max="365">
-            </div>
-
-            <div class="form-row">
-                <label>Lock / Unlock Control (Remote Band/Chalu)</label>
+                <label>License / Lock Control (Apne Hath Mein Control)</label>
                 <select id="admStatus">
-                    <option value="active">🟢 Active (Chalu Hai)</option>
-                    <option value="locked">🔴 Force Lock (Band Karo)</option>
+                    <option value="active">🟢 Active (24h Trial Chalu)</option>
+                    <option value="subscribed">👑 Subscribed (Full Unlimited)</option>
+                    <option value="locked">🔴 Force Lock (Abhi Band Karo)</option>
                 </select>
             </div>
-
+            <div class="form-row">
+                <label>Reset Timer (Naya 24h Trial Dene Ke Liye)</label>
+                <button type="button" onclick="reset24hTimer()" style="width:100%; background:var(--input); border:1px solid var(--cyan); color:var(--cyan); padding:8px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;">🔄 Restart 24-Hour Timer Now</button>
+            </div>
             <div class="title" style="margin-top:12px;">
                 <span>Rate List & Dishes Management</span>
                 <button onclick="addDishRow()" style="background:var(--emerald); border:none; color:#fff; padding:3px 6px; border-radius:5px; font-size:9px; font-weight:700; cursor:pointer;">+ Add</button>
             </div>
             <div id="admDishBox" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px;"></div>
-
             <div style="display:flex; gap:6px;">
                 <button onclick="saveAdmin()" class="act-btn b-cash" style="flex:1;">Save Settings</button>
                 <button onclick="exportBackup()" class="act-btn b-online" style="flex:1;">📥 Backup JSON</button>
@@ -165,7 +195,10 @@
         <div class="header">
             <div class="h-info">
                 <h1 id="shopTitle">Naseeb Biryani</h1>
-                <span>Fast Digital Ledger</span>
+                <div>
+                    <span>Fast Digital Ledger</span>
+                    <span id="liveTimerBadge" class="timer-badge" style="display:none;">⏱️ 24:00:00</span>
+                </div>
             </div>
             <button class="admin-btn" onclick="openAdmin()">⚙️ Admin</button>
         </div>
@@ -189,11 +222,17 @@
                 <div class="type-pill" onclick="setType('Delivery', this)">🛵 Delivery</div>
             </div>
 
-            <div class="title">2. Biryani / Menu Button Dabayein (Halwa UI)</div>
+            <div class="title">2. Biryani / Menu Button Tap Karein (Tap = +1)</div>
             <div class="menu-grid" id="menuBox"></div>
 
             <div class="selected-box">
-                <span>Item: <strong id="selName">Kuch nahi</strong></span>
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                    <span>Item: <strong id="selName">Kuch nahi</strong></span>
+                    <div id="qtyActionWrap" class="qty-controls" style="display:none;">
+                        <button class="q-btn" onclick="decreaseQty()" title="Kam Karein">-</button>
+                        <button class="q-btn del" onclick="clearSelection()" title="Hataein">✕</button>
+                    </div>
+                </div>
                 <span>Bill: <strong id="selPrice">Rs. 0</strong></span>
             </div>
 
@@ -224,7 +263,7 @@
                             <th>Detail / Naam</th>
                             <th>Bill</th>
                             <th>Type</th>
-                            <th>Waqt</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="ledgerBody"></tbody>
@@ -232,8 +271,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         const initialMenu = [
             { id: 1, name: "Chicken Biryani (Plate)", price: 250 },
             { id: 2, name: "Chicken Biryani (Full/Double)", price: 450 },
@@ -243,44 +281,102 @@
             { id: 6, name: "Cold Drink (Sting/Pepsi)", price: 90 }
         ];
 
-        let license = JSON.parse(localStorage.getItem('pos_license_v4')) || {
-            installTime: Date.now(),
-            trialDays: 2,
-            status: 'active'
+        const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000; // Exact 24 Hours
+
+        let license = JSON.parse(localStorage.getItem('pos_license_v9')) || {
+            startTime: null,
+            status: 'pending' // pending, active, subscribed, locked
         };
 
-        let config = JSON.parse(localStorage.getItem('pos_config_v4')) || {
+        let config = JSON.parse(localStorage.getItem('pos_config_v9')) || {
             shopName: "Naseeb Biryani"
         };
 
-        let menu = JSON.parse(localStorage.getItem('pos_menu_v4')) || initialMenu;
-        let ledger = JSON.parse(localStorage.getItem('pos_ledger_v4')) || [];
+        let menu = JSON.parse(localStorage.getItem('pos_menu_v9')) || initialMenu;
+        let ledger = JSON.parse(localStorage.getItem('pos_ledger_v9')) || [];
 
         let activeDish = null;
+        let activeQty = 1;
         let activeType = "Dukaan (Walk-in)";
+        let countdownInterval = null;
 
         function init() {
             const todayIso = new Date().toISOString().split('T')[0];
             document.getElementById('dateFilter').value = todayIso;
-            checkTrialExpiry();
+            checkTrialStatus();
+            startLiveClock();
             document.getElementById('shopTitle').innerText = config.shopName;
             renderMenu();
             renderApp();
         }
 
-        function checkTrialExpiry() {
-            const now = Date.now();
-            const elapsedDays = (now - license.installTime) / (1000 * 60 * 60 * 24);
-            const paywall = document.getElementById('paywall');
+        function start24HourTrial() {
+            license.startTime = Date.now();
+            license.status = 'active';
+            localStorage.setItem('pos_license_v9', JSON.stringify(license));
+            document.getElementById('trialModal').style.display = 'none';
+            checkTrialStatus();
+        }
 
-            if (license.status === 'locked' || elapsedDays > license.trialDays) {
+        function checkTrialStatus() {
+            const trialModal = document.getElementById('trialModal');
+            const paywall = document.getElementById('paywall');
+            const badge = document.getElementById('liveTimerBadge');
+
+            if (license.status === 'locked') {
+                trialModal.style.display = 'none';
                 paywall.style.display = 'flex';
-                if (elapsedDays > license.trialDays && license.status === 'active') {
-                    document.getElementById('lockMsg').innerText = `Aapka ${license.trialDays} din ka free trial poora ho gaya hai. Mahana plan activate karwayein.`;
-                }
-            } else {
-                paywall.style.display = 'none';
+                badge.style.display = 'none';
+                document.getElementById('lockMsg').innerText = "Admin ki taraf se yeh system band kar diya gaya hai. Mazeed maloomat ke liye rabta karein.";
+                return;
             }
+
+            if (license.status === 'subscribed') {
+                trialModal.style.display = 'none';
+                paywall.style.display = 'none';
+                badge.style.display = 'inline-block';
+                badge.innerText = "👑 VIP Active";
+                return;
+            }
+
+            if (!license.startTime || license.status === 'pending') {
+                trialModal.style.display = 'flex';
+                paywall.style.display = 'none';
+                badge.style.display = 'none';
+                return;
+            }
+
+            const elapsed = Date.now() - license.startTime;
+            if (elapsed >= TRIAL_DURATION_MS) {
+                trialModal.style.display = 'none';
+                paywall.style.display = 'flex';
+                badge.style.display = 'none';
+                document.getElementById('lockMsg').innerText = "Aapka 24 ghante ka free trial mukammal ho gaya hai. Mazeed istamal ke liye subscription plan hasil karein.";
+            } else {
+                trialModal.style.display = 'none';
+                paywall.style.display = 'none';
+                badge.style.display = 'inline-block';
+            }
+        }
+
+        function startLiveClock() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                if (license.status !== 'active' || !license.startTime) return;
+
+                const remaining = TRIAL_DURATION_MS - (Date.now() - license.startTime);
+                if (remaining <= 0) {
+                    checkTrialStatus();
+                    return;
+                }
+
+                const hrs = Math.floor(remaining / (1000 * 60 * 60));
+                const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((remaining % (1000 * 60)) / 1000);
+
+                const fmt = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                document.getElementById('liveTimerBadge').innerText = `⏱️ ${fmt}`;
+            }, 1000);
         }
 
         function setType(type, el) {
@@ -291,19 +387,62 @@
 
         function renderMenu() {
             const box = document.getElementById('menuBox');
-            box.innerHTML = menu.map(item => `
-                <div class="menu-item ${activeDish && activeDish.id === item.id ? 'selected' : ''}" onclick="pickItem(${item.id})">
-                    <b>${item.name}</b>
-                    <span>Rs. ${item.price}</span>
-                </div>
-            `).join('');
+            box.innerHTML = menu.map(item => {
+                const isSelected = activeDish && activeDish.id === item.id;
+                return `
+                    <div class="menu-item ${isSelected ? 'selected' : ''}" onclick="pickItem(${item.id})">
+                        <b>${item.name}</b>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px;">
+                            <span>Rs. ${item.price}</span>
+                            ${isSelected ? `<span style="background:var(--emerald); color:#000; padding:1px 6px; border-radius:6px; font-size:10px; font-weight:800;">x${activeQty}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function pickItem(id) {
-            activeDish = menu.find(d => d.id === id);
-            document.getElementById('selName').innerText = activeDish.name;
-            document.getElementById('selPrice').innerText = 'Rs. ' + activeDish.price;
+            const item = menu.find(d => d.id === id);
+            if (activeDish && activeDish.id === id) {
+                activeQty += 1;
+            } else {
+                activeDish = item;
+                activeQty = 1;
+            }
+            updateSelectionDisplay();
             renderMenu();
+        }
+
+        function decreaseQty() {
+            if (!activeDish) return;
+            if (activeQty > 1) {
+                activeQty -= 1;
+            } else {
+                activeDish = null;
+                activeQty = 1;
+            }
+            updateSelectionDisplay();
+            renderMenu();
+        }
+
+        function clearSelection() {
+            activeDish = null;
+            activeQty = 1;
+            updateSelectionDisplay();
+            renderMenu();
+        }
+
+        function updateSelectionDisplay() {
+            const ctrlWrap = document.getElementById('qtyActionWrap');
+            if (!activeDish) {
+                document.getElementById('selName').innerText = "Kuch nahi";
+                document.getElementById('selPrice').innerText = "Rs. 0";
+                ctrlWrap.style.display = 'none';
+            } else {
+                document.getElementById('selName').innerText = `${activeDish.name} (x${activeQty})`;
+                document.getElementById('selPrice').innerText = 'Rs. ' + (activeDish.price * activeQty);
+                ctrlWrap.style.display = 'inline-flex';
+            }
         }
 
         function recordSale(payType) {
@@ -320,10 +459,11 @@
             }
 
             const now = new Date();
+            const totalItemPrice = Number(activeDish.price * activeQty);
             const entry = {
                 id: Date.now(),
-                dishName: activeDish.name,
-                price: Number(activeDish.price),
+                dishName: `${activeDish.name} (x${activeQty})`,
+                price: totalItemPrice,
                 orderType: activeType,
                 paymentType: payType,
                 customer: customerName.trim(),
@@ -332,13 +472,18 @@
             };
 
             ledger.unshift(entry);
-            localStorage.setItem('pos_ledger_v4', JSON.stringify(ledger));
+            localStorage.setItem('pos_ledger_v9', JSON.stringify(ledger));
 
-            activeDish = null;
-            document.getElementById('selName').innerText = "Kuch nahi";
-            document.getElementById('selPrice').innerText = "Rs. 0";
-            renderMenu();
+            clearSelection();
             renderApp();
+        }
+
+        function deleteLedgerRow(id) {
+            if (confirm("Kya aap waqai yeh entry delete karna chahte hain?")) {
+                ledger = ledger.filter(r => r.id !== id);
+                localStorage.setItem('pos_ledger_v9', JSON.stringify(ledger));
+                renderApp();
+            }
         }
 
         function clearDateFilter() {
@@ -370,12 +515,12 @@
                     <tr>
                         <td>
                             <b>${r.dishName}</b>
-                            <div style="font-size:9px; color:var(--muted);">${r.orderType} • ${r.dateStr}</div>
+                            <div style="font-size:9px; color:var(--muted);">${r.orderType} • ${r.timeStr}</div>
                             ${r.customer ? `<div style="font-size:10px; color:var(--rose); font-weight:700;">👤 ${r.customer}</div>` : ''}
                         </td>
                         <td style="font-weight:700;">Rs. ${r.price}</td>
                         <td><span class="tag ${badgeCls}">${r.paymentType}</span></td>
-                        <td style="color:var(--muted); font-size:10px;">${r.timeStr}</td>
+                        <td><button class="del-row-btn" onclick="deleteLedgerRow(${r.id})" title="Delete Entry">🗑️</button></td>
                     </tr>
                 `;
             }).join('');
@@ -389,7 +534,6 @@
                 return;
             }
 
-            // Calculate live totals for Admin
             const todayIso = new Date().toISOString().split('T')[0];
             const monthPrefix = todayIso.slice(0, 7);
 
@@ -402,11 +546,17 @@
             document.getElementById('admUdhaar').innerText = 'Rs. ' + udhaarSum;
 
             document.getElementById('admShop').value = config.shopName;
-            document.getElementById('admTrialDays').value = license.trialDays;
-            document.getElementById('admStatus').value = license.status;
+            document.getElementById('admStatus').value = license.status === 'pending' ? 'active' : license.status;
 
             renderAdminDishes();
             document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function reset24hTimer() {
+            license.startTime = Date.now();
+            license.status = 'active';
+            document.getElementById('admStatus').value = 'active';
+            alert("Naya 24-Hour Trial Timer Set ho gaya hai! Save Settings dabana na bhulein.");
         }
 
         function renderAdminDishes() {
@@ -434,10 +584,10 @@
             const newName = document.getElementById('admShop').value.trim();
             if (newName) config.shopName = newName;
 
-            const days = parseInt(document.getElementById('admTrialDays').value);
-            if (!isNaN(days) && days > 0) license.trialDays = days;
-
             license.status = document.getElementById('admStatus').value;
+            if (license.status === 'active' && !license.startTime) {
+                license.startTime = Date.now();
+            }
 
             const updatedMenu = [];
             for (let i = 0; i < menu.length; i++) {
@@ -454,12 +604,12 @@
             }
 
             menu = updatedMenu;
-            localStorage.setItem('pos_config_v4', JSON.stringify(config));
-            localStorage.setItem('pos_license_v4', JSON.stringify(license));
-            localStorage.setItem('pos_menu_v4', JSON.stringify(menu));
+            localStorage.setItem('pos_config_v9', JSON.stringify(config));
+            localStorage.setItem('pos_license_v9', JSON.stringify(license));
+            localStorage.setItem('pos_menu_v9', JSON.stringify(menu));
 
             document.getElementById('shopTitle').innerText = config.shopName;
-            checkTrialExpiry();
+            checkTrialStatus();
             renderMenu();
             renderApp();
             closeAdmin();
